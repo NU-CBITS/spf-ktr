@@ -76,9 +76,6 @@ app.build.navChapterBar = function (arrayOfChapters) {
 
 app.build.chapter = function (currentChapterId, appContents) {
 
-	$("button.pageNext").off("click");
-	$("button.pageBack").off("click");
-
 	console.log("Building Chapter", currentChapterId);
 	app.status.currentChapterElement = _.where(app.content, {
 		id: currentChapterId
@@ -93,34 +90,15 @@ app.build.chapter = function (currentChapterId, appContents) {
 
 	$(".currentSlideCount").html("1 of " + app.status.numPagesInCurrentChapter);
 
-	$(".pageNext").html('NEXT <i class= "icon-chevron-right"></i>');
-	$(".pageBack").html('<i class="icon-chevron-left"></i> BACK');
-
-	$("button.pageNext").on("click", function (ev) {
-		app.actions.changePage(app.status.currentPageIndex + 1)
-	});
-	$("button.pageBack").on("click", function (ev) {
-		app.actions.changePage(app.status.currentPageIndex - 1)
-	});
-
 	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 
 	$(".mainContainer, .pageNext, .chapterProgress, .currentSlideCount").show();
-
-	if (app.status.numPagesInCurrentChapter == 1) {
-
-		app.actions.goOn();
-
-		$(".pageBack").hide();
-	} else {
-		$(".pageNext").show();
-		$(".pageBack").show();
-	}
 
 };
 
 app.build.chapterProgressBar = function (position, total) {
 	$(".chapterProgressBar").width((position / total) * 100 + "%");
+	app.build.progressBarButtons();
 }
 
 app.templates = {};
@@ -202,43 +180,12 @@ app.actions.setPage = function (pageContents) {
 };
 
 app.actions.changePage = function (index_of_page) {
+
 	console.log("Page changed to ", index_of_page + 1, "of", app.status.numPagesInCurrentChapter);
 
 	$(".currentSlideCount").html(index_of_page + 1 + " of " + app.status.numPagesInCurrentChapter);
 
 	app.status.currentPageIndex = index_of_page;
-
-	if (index_of_page == 0) {
-		$("button.pageNext").off("click");
-		$("button.pageBack").off("click");
-		$("button.pageNext").on("click", function (ev) {
-			app.actions.changePage(app.status.currentPageIndex + 1)
-		});
-		$("button.pageBack").on("click", function (ev) {
-			app.actions.changePage(app.status.currentPageIndex - 1)
-		});
-		$(".pageBack").hide();
-	}
-
-	if (index_of_page == app.status.numPagesInCurrentChapter - 1) {
-
-		app.actions.goOn();
-
-	}
-
-	if (index_of_page != 0 && index_of_page != app.status.numPagesInCurrentChapter - 1) {
-		$(".pageNext").html('NEXT <i class= "icon-chevron-right"></i>');
-		$(".pageBack").html('<i class="icon-chevron-left"></i> BACK');
-		$("button.pageNext").off("click");
-		$("button.pageBack").off("click");
-		$("button.pageNext").on("click", function (ev) {
-			app.actions.changePage(app.status.currentPageIndex + 1)
-		});
-		$("button.pageBack").on("click", function (ev) {
-			app.actions.changePage(app.status.currentPageIndex - 1)
-		});
-		$(".pageBack").show();
-	}
 
 	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 	app.actions.setPage(app.status.currentChapterContents[app.status.currentPageIndex]);
@@ -254,21 +201,6 @@ app.actions.goToChapter = function (chapterId, appContents) {
 	// } else {
 	//     // Do nothing!
 	// }
-
-};
-
-app.actions.goOn = function () {
-
-	$(".pageNext").html('GO ON <i class= "icon-stop"></i>');
-
-	$("button.pageNext").off("click");
-	$("button.pageBack").off("click");
-	$("button.pageNext").on("click", function (ev) {
-		app.actions.loadAssessment();
-	});
-	$("button.pageBack").on("click", function (ev) {
-		app.actions.changePage(app.status.currentPageIndex - 1)
-	});
 
 };
 
@@ -361,6 +293,73 @@ app.build.displayChoosenSkinType = function () {
 			$('button[data-skin-color="' + app.skinColor + '"]').addClass('active').addClass('btn-warning');
 		};
 	});
+};
+
+app.build.backNextButtons = function() {
+	
+	$(".pageNext").html('NEXT <i class= "icon-chevron-right"></i>');
+	$(".pageBack").html('<i class="icon-chevron-left"></i> BACK');
+
+	$("button.pageNext").on("click", function (ev) {
+		app.actions.changePage(app.status.currentPageIndex + 1)
+	});
+
+	$("button.pageBack").on("click", function (ev) {
+		app.actions.changePage(app.status.currentPageIndex - 1)
+	});
+
+	$("button.pageNext").show();
+
+}
+
+app.build.goOnButton = function () {
+
+	$(".pageNext").html('GO ON <i class= "icon-stop"></i>');
+
+	$("button.pageNext").on("click", function (ev) {
+		app.actions.loadAssessment();
+	});
+
+	$("button.pageBack").on("click", function (ev) {
+		app.actions.changePage(app.status.currentPageIndex - 1)
+	});
+
+	$("button.pageNext").show();
+
+};
+
+app.build.progressBarButtons = function () {
+
+	var index_of_page = app.status.currentPageIndex;
+	var numPages = app.status.numPagesInCurrentChapter;
+	var lastPage = numPages - 1;
+	$("button.pageNext").off("click");
+	$("button.pageBack").off("click");
+
+	// ONLY 'Go On' - on FIRST page of ONLY 1 page
+	if (app.status.numPagesInCurrentChapter == 1) {
+		app.build.goOnButton();
+		$("button.pageBack").hide();
+	};
+
+	// ONLY 'Next' - on FIRST page of many pages
+	if ((index_of_page == 0) && (index_of_page != lastPage)) {
+		app.build.backNextButtons();
+		$("button.pageBack").hide();
+	};
+
+	// 'Back' & 'Next' - on a middle page of many pages
+	if ((index_of_page != 0) && (index_of_page != lastPage)) {
+		app.build.backNextButtons();
+		$("button.pageBack").show();
+	};
+
+	// 'Back' & 'Go On' - on the LAST page of many pages
+	if ((numPages > 1) && (index_of_page == lastPage)) {
+		app.build.goOnButton();
+		$("button.pageBack").show();
+	};
+
 };
 
 app.build.loadSkinColorHighChart = function () {
