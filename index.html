@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content="initial-scale=1.0, user-scalable=no" name="viewport">
+
+  <title>SPF KTR</title>
+  <link href="js/vendor/bootstrap/css/bootstrap.min.css" media="screen" rel="stylesheet">
+  <link href="js/vendor/bootstrap/css/bootstrap-responsive.min.css" media="screen" rel="stylesheet">
+
+  <script src="js/vendor/jquery-1.9.1.js"></script>
+  <script src="js/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="js/vendor/underscore-min.js"></script>
+  <script src="js/vendor/highcharts/highcharts.js"></script>
+
+  <!--app JS-->
+  <script src="js/app/content.js"></script>
+  <script src="js/app/app.js"></script><!-- User-generated css -->
+  <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+  <style>
+    img.abc {
+      height: 325px;
+      width:auto;
+    }
+    .bottom {bottom:10px; position: absolute;}
+    .pageNext,.pageBack, .chapterProgress,.mainContainer,.currentSlideCount {display:none;}
+    .mainContent, .topRight {
+      padding:30px;
+      text-align: left;
+    }
+    .mainContent {
+      font-size: 1.4em;
+      margin-top:15px;
+      margin-top:0;
+    }
+    .mainContent h1 {
+      margin-top: 0px; /* So it lines up with the audio */
+      font-size:1.6em;
+    }
+    .mainContent li {
+      font-size:1em;
+      line-height: 1.5em;
+      margin-bottom: .5em
+    }
+    .mainContent ol.condensed li {
+      font-size:1em;
+      line-height: 1.25em;
+      margin-bottom: .25em
+    }
+    /*.mainContent ul { margin-top:0;}*/
+    .mainContent label.checkbox {
+      font-size: 22px;
+      line-height: 28px;
+      min-height: 28px;
+      margin-bottom: .5em
+    }
+    .mainContent label.checkbox  input[type="button"] {
+      font-size: 20px;
+    }
+    .mainContent input[type="checkbox"] {
+      margin-top:10px;
+    }
+    .btn-group.btn-vertical .btn-block.btn-large {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    nav, .main_nav,.load-chapter,.navbar,.navbar-inner {
+      font-size: 15.25px;
+      background-color:#813B81 !important;
+      border:0 !important;
+      background-image:none !important;
+    }
+   
+    h1 {color:#813B81;}
+    h2 {color:#B988B9;}
+    h3 {color:#D8C0D8;}
+
+    .topRight{
+      height:375px;
+      padding-left: 0px;
+    }
+    .topRight img {
+      max-height: 325px!important;
+      width: auto;
+    }
+    .cover-images img {
+      margin-right: 20px;
+    }
+    .bottomRight{
+      padding:1.5em;
+      text-align: left;
+      padding-left: 0px;
+    }
+    .bottomRight h1 {  font-size:1.7em;margin: 0;}
+
+    .btn-large {font-size: 1.8em;}
+    .load-chapter a {font-size:1.2em;}
+
+    .active  a {background-color:#B988B9 !important; font-weight:bold !important; }
+
+    /* override btn so checkmark works */
+    .btn-group label.checkbox button.btn.btn-large {
+      font-size: 17.5px;
+      position: relative;
+      width:50px;
+      height:44px;
+    }
+    #skin-color-graph-container {
+      min-width: 310px;
+      height: 350px;
+      min-height: 350px;
+      margin: 0 auto;
+    }
+    /* <span class="btn-checkmark-container"></span> */
+    div.btn-checkmark-container {
+      -webkit-background-clip: border-box;
+      -webkit-background-origin: padding-box;
+      -webkit-background-size: auto;
+      background-attachment: scroll;
+      background-clip: border-box;
+      background-color: rgba(0, 0, 0, 0);
+      background-image: url(http://code.jquery.com/mobile/1.0a4.1/images/icons-18-white.png);
+      background-origin: padding-box;
+      background-position: -684px 50%;
+      background-repeat: no-repeat;
+      background-size: auto;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      color: rgb(68, 68, 68);
+      cursor: pointer;
+      display: block;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      height: 18px;
+      left: 15px;
+      margin-top: -9px;
+      position: absolute;
+      text-align: left;
+      text-shadow: rgb(246, 246, 246) 0px 1px 1px;
+      top: 50%;
+      white-space: nowrap;
+      width: 18px;
+    }
+    div.btn-checkmark-container i.icon-ok {
+      margin-top: 0px;
+      margin-left: 1px;
+    }
+    li.my-skin-color {
+      margin-left:6px;
+      margin-right:6px;
+      -webkit-box-shadow: 0px 4px 8px #888888;
+      -moz-box-shadow: 0px 4px 8px #888888;
+      box-shadow: 0px 4px 8px #888888;    
+/*          -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+      -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);     */     
+    }
+    .skin-color ul.nav.nav-pills li.my-skin-color a {
+      width:150px;
+      height:50px;
+    }
+    a.image {background: url('images/icons/image.png') no-repeat left center;min-height: 40px; padding-left:55px; display: block;}
+    a.video {background: url('images/icons/video.png') no-repeat left center;min-height: 40px; padding-left:55px; display: block;}
+    a.graph {background: url('images/icons/graph.png') no-repeat left center;min-height: 40px; padding-left:55px; display:block; opacity: 1}
+    a.audio {background: url('images/icons/audio.png') no-repeat left center;min-height: 40px; padding-left:55px; display:block; opacity: 1}
+    a.audioImage {background: url('images/icons/audioImage.png') no-repeat left center;min-height: 40px; padding-left:55px; display:block; opacity: 1}
+
+     a {padding-top:10px;}
+
+    .chapterProgressBar{background-color: #813B81 !important;}
+    .tooltip{font-size:1.5em !important;}
+
+    .skin-colors div {
+      margin-bottom: 0px;
+      display: inline-block;
+      width:180px;
+      height:60px;
+      border-radius: 0px;
+      margin-right: -5px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+    .skin-colors button {
+      position:absolute;
+      top:8px;
+      left:-45px;
+    }
+    .skin-colors label.radio {
+      position:relative;
+      margin-left: 75px;
+    }
+    div.sk1a { background-color: #F9D2A9; }
+    div.sk1b { background-color: #FDE5B7; }
+    div.sk2a { background-color: #CDA778; }
+    div.sk2b { background-color: #CDAC7F; }
+    div.sk2c { background-color: #DEBC97; }
+    div.sk3a { background-color: #B4835A; }
+    div.sk3b { background-color: #C18C60; }
+    div.sk3c { background-color: #C1936A; }
+    div.sk3d { background-color: #D89F6A; }
+    div.sk4a { background-color: #98623F; }
+    div.sk4b { background-color: #A67246; }
+    div.sk4c { background-color: #AC7853; }
+    div.sk5a { background-color: #68462D; }
+    div.sk5b { background-color: #6B4532; }
+    div.sk5c { background-color: #7B4D35; }
+    div.sk5d { background-color: #835239; }
+    div.sk5e { background-color: #8C593A; }
+    div.sk6a { background-color: #2F2019; }
+    div.sk6b { background-color: #4F2E1F; }
+    div.sk6C { background-color: #563B2A; }
+
+  </style>
+
+  <script>
+    try {
+
+    $(function() {
+      app.start();
+    });
+
+    } catch (error) {
+      console.error("Your javascript has an error: " + error);
+    }
+  </script>
+
+</head>
+
+<body>
+  <div class="navbar navbar-static-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <!-- Everything you want hidden at 940px or less, place within here -->
+        <div class="nav-collapse collapse">
+          <ul class="nav" id="main_nav"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="container-fluid">
+    <div class="row-fluid mainContainer">
+    </div>
+    <div class="row-fluid bottom">
+      <div class="span2">
+        <button class="pageBack btn btn-large"></button>
+      </div>
+      <div class="span8">
+        <div class="currentSlideCount text-center"></div>
+        <div class="progress progress-striped chapterProgress">
+            <div class="bar chapterProgressBar" style="width: 20%;"></div>
+        </div>
+      </div>
+      <div class="span2">
+        <button class="pageNext btn btn-large"></button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
