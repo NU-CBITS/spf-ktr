@@ -3,6 +3,20 @@ app.content = appContent;
 
 app.config = {};
 app.config.mode = "demo"; //demo or normal or assessment
+app.config.language = "english";
+app.config.language = "spanish";
+
+app.text = {}
+
+if (app.config.language == "english") {
+	app.text.goBack = "BACK"
+	app.text.nextText = "NEXT";
+	app.text.goOn = "GO ON";
+} else {
+	app.text.goBack = "Regresar"
+	app.text.nextText = "Pr&oacute;ximo";
+	app.text.goOn = "Continuar";
+};
 
 app.config.mainContent = {};
 app.config.mainContent.showTitle = false;
@@ -297,8 +311,8 @@ app.build.displayChoosenSkinType = function () {
 
 app.build.backNextButtons = function() {
 	
-	$(".pageNext").html('NEXT <i class= "icon-chevron-right"></i>');
-	$(".pageBack").html('<i class="icon-chevron-left"></i> BACK');
+	$(".pageNext").html(app.text.nextText+' <i class= "icon-chevron-right"></i>');
+	$(".pageBack").html('<i class="icon-chevron-left"></i> '+app.text.goBack);
 
 	$("button.pageNext").on("click", function (ev) {
 		app.actions.changePage(app.status.currentPageIndex + 1)
@@ -314,7 +328,7 @@ app.build.backNextButtons = function() {
 
 app.build.goOnButton = function () {
 
-	$(".pageNext").html('GO ON <i class= "icon-stop"></i>');
+	$(".pageNext").html(app.text.goOn+' <i class= "icon-stop"></i>');
 
 	$("button.pageNext").on("click", function (ev) {
 		app.actions.loadAssessment();
