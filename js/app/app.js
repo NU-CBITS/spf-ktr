@@ -3,19 +3,22 @@ app.content = appContent;
 
 app.config = {};
 app.config.mode = "demo"; //demo or normal or assessment
-app.config.language = "english";
+// app.config.language = "english";
 app.config.language = "spanish";
 
 app.text = {}
+app.style = {}
 
 if (app.config.language == "english") {
 	app.text.goBack = "BACK"
 	app.text.nextText = "NEXT";
 	app.text.goOn = "GO ON";
+	app.style.loadChapterStyle = "font-size:1.2em;";
 } else {
 	app.text.goBack = "Regresar"
 	app.text.nextText = "Pr&oacute;ximo";
 	app.text.goOn = "Continuar";
+	app.style.loadChapterStyle = "font-size:1em;";
 };
 
 app.config.mainContent = {};
@@ -79,7 +82,7 @@ app.build.navChapterBar = function (arrayOfChapters) {
 
 	_.each(arrayOfChapters, function (i) {
 
-		$("#main_nav").append('<li class="load-chapter" data-id="' + i.id + '"><a href="#' + i.pretty_name + '">' + i.pretty_name + '</a></li>');
+		$("#main_nav").append('<li class="load-chapter" data-id="' + i.id + '"><a href="#' + i.pretty_name + '" style="'+app.style.loadChapterStyle+'">' + i.pretty_name + '</a></li>');
 
 	});
 
