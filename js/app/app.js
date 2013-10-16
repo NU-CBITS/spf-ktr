@@ -6,8 +6,8 @@ app.config.mode = "demo"; //demo or normal or assessment
 // app.config.language = "english";
 app.config.language = "spanish";
 
-app.text = {}
-app.style = {}
+app.text = {};
+app.style = {};
 
 if (app.config.language == "english") {
 	app.text.goBack = "BACK"
@@ -379,6 +379,7 @@ app.build.progressBarButtons = function () {
 
 };
 
+
 app.build.loadSkinColorHighChart = function () {
 	$(function () {
 
@@ -395,7 +396,13 @@ app.build.loadSkinColorHighChart = function () {
 			]
 
 			if (app.skinColor) {
-				skinCategories[app.skinColor - 1] = "<p style=\"margin-top:5px;\"><span class='label label-success' style=\"padding: 4px 6px;font-size: 16px;line-height: 18px;\">Your Chance</span></p>"
+				var text;
+				if (app.config.language == "spanish") {
+					text = "Su Probabilidad";
+				} else {
+					text = "Your Chance";
+				};
+				skinCategories[app.skinColor - 1] = "<p style=\"margin-top:5px;\"><span class='label label-success' style=\"padding: 4px 6px;font-size: 16px;line-height: 18px;\">"+text+"</span></p>"
 			};
 
 			skinColorContainer.highcharts({
@@ -443,19 +450,36 @@ app.build.loadSkinColorHighChart = function () {
 					}
 				},
 				series: [{
-					name: 'Before Transplant',
+					name: function() {
+						if (app.config.language == "spanish") {
+							return "Antes de Transplante";
+						} else {
+							return 'Before Transplant';
+						};
+					}(),
 					data: [100, 80, 50, 25, 10, 2]
 				}, {
-					name: 'After Transplant',
+					name: function() {
+						if (app.config.language == "spanish") {
+							return "Despu&eacute;s de Transplante";
+						} else {
+							return 'After Transplant';
+						};
+					}(),
 					data: [100, 100, 90, 70, 40, 25]
 				}],
 				title: {
 					margin: 50,
-					text: 'Your Chance of Getting Sunburn Based on Your Skin Color',
+					text: function() {
+						if (app.config.language == "spanish") {
+							return "Su Probabilidad de una Quemadura Solar Basada en su Tono de Piel.";
+						} else {
+							return 'Your Chance of Getting Sunburn Based on Your Skin Color';
+						};
+					}(),
 					style: {
 						fontSize: '20px'
 					}
-
 				},
 				xAxis: {
 					categories: skinCategories,
@@ -466,7 +490,13 @@ app.build.loadSkinColorHighChart = function () {
 						}
 					},
 					title: {
-						text: 'Skin Color Level',
+						text: function() {
+							if (app.config.language == "spanish") {
+								return "Nivel de Tono de Piel";
+							} else {
+								return 'Skin Color Level';
+							};
+						}(),
 						style: {
 							fontSize: '18px'
 						}
@@ -476,7 +506,13 @@ app.build.loadSkinColorHighChart = function () {
 					min: 0,
 					max: 100,
 					title: {
-						text: 'Chance of Getting Sunburn (%)',
+						text: function() {
+							if (app.config.language == "spanish") {
+								return "Probabilidad de una Quemadura Solar (%)";
+							} else {
+								return 'Chance of Getting Sunburn (%)';
+							};
+						}(),
 						style: {
 							fontSize: '18px'
 						}
