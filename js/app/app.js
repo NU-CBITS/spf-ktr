@@ -461,7 +461,7 @@ app.build.loadSkinColorHighChart = function () {
 				}, {
 					name: function() {
 						if (app.config.language == "spanish") {
-							return "Despu&eacute;s de Transplante";
+							return "Después de Transplante";
 						} else {
 							return 'After Transplant';
 						};
@@ -514,7 +514,7 @@ app.build.loadSkinColorHighChart = function () {
 							};
 						}(),
 						style: {
-							fontSize: '18px'
+							fontSize: '16px'
 						}
 					},
 					labels: {
