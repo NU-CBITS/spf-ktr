@@ -1,10 +1,8 @@
 var app = {};
-app.content = appContent;
-
 app.config = {};
 app.config.mode = "demo"; //demo or normal or assessment
-// app.config.language = "english";
-app.config.language = "spanish";
+app.config.language = "english";
+// app.config.language = "spanish";
 
 app.text = {};
 app.style = {};
@@ -32,6 +30,7 @@ app.videos_url = "videos/";
 app.audio_url = "audio/";
 
 app.status = {};
+app.status.currentState = null; //lesson, post_lesson, assessment1, assessment2, summary1, summary2 
 app.status.currentPageIndex = null;
 app.status.currentChapterId = null;
 app.status.currentChapterElement = null;
@@ -39,38 +38,39 @@ app.status.currentChapterContents = null;
 app.status.numPagesInCurrentChapter = null;
 
 
-app.start = function (appContent) {
-
+app.start = function (appContents) {
+	var moduleName = "baseline"
+	
+	app.content = appContents.nav_elements;
+	app.questions = appContents.questions;
+	app.actions.loadPage(0, moduleName, _.where(app.questions, { use: moduleName }));
+	
 	if (app.config.mode == "demo") {
-		app.status.currentChapterId = 681;
-	}
+		app.build.navChapterBar(app.arrayOfChapterIds(app.content));
+	};
+};
 
-	app.build.navChapterBar(app.arrayOfChapterIds(app.content));
-	app.build.chapter(app.status.currentChapterId, app.content);
-
-}
-
-app.arrayOfChapterIds = function (appContent) {
+app.arrayOfChapterIds = function (appContents) {
 
 	var search_criteria = {
 		element_type: "lesson"
 	};
-	return _.where(appContent, search_criteria);
+	return _.where(appContents, search_criteria);
 };
 
-app.getChapterContents = function (chapter_id, appContent) {
+app.getChapterContents = function (chapter_id, appContents) {
 	var search_criteria = {
 		id: chapter_id
 	};
-	chapter_contents_list = _.where(appContent, search_criteria)[0].element_list.toString().split(",");
+	chapter_contents_list = _.where(appContents, search_criteria)[0].element_list.toString().split(",");
 	chapter_contents = [];
 
-	// console.log("Chapter selected:",_.where(appContent, search_criteria)[0]);
+	// console.log("Chapter selected:",_.where(appContents, search_criteria)[0]);
 	// console.log("Chapter contents list:",chapter_contents_list);
 
 	_.each(chapter_contents_list, function (element) {
 		// console.log(parseInt(element));
-		chapter_contents.push(_.where(appContent, {
+		chapter_contents.push(_.where(appContents, {
 			id: parseInt(element)
 		})[0]);
 	});
@@ -78,6 +78,73 @@ app.getChapterContents = function (chapter_id, appContent) {
 };
 
 app.build = {}
+app.build.form = {};
+
+app.build.questionForm = function(question) {
+	var continueButton, form, saveButton;
+	saveButton = "<div class='clearfix'></div><input autofocus type='submit' name='submit' value='Submit' class='btn btn-large' id='save-button'/>";
+	continueButton = "<div class='clearfix'></div><button class='btn btn-large' id='continue-button' autofocus>Continue</button>";
+	switch (question.type) {
+	case "radio":
+		form = app.build.form.radio(question);
+		form += saveButton
+		break;
+	case "checkbox":
+		form = app.build.form.checkbox(question);
+		form += saveButton
+		break;	
+	case "text":
+		form = app.build.form.textarea(question);
+		form += saveButton
+		break;
+	default:
+		form = app.build.form.defaultForm(question);
+		form += continueButton
+		break;
+	};
+	return form;
+};
+
+app.build.form.radio = function (question) {
+	form = "<form><fieldset><p class='lead'>" + question.content + "</p>";
+	for (var i = 0; i < 5; i++) {
+		if (eval("question.response" + i) != "") {
+			var answer = "<label class='radio' for='response" + i + "'>" +
+				"<input type='radio' name='" + question.data_label + "' id=response" + i + " value='" + eval("question.response" + i) + "'>" +
+				eval("question.response" + i) +
+				"</label>";
+			form += answer;
+		};
+	};
+	form += "</fieldset></form>"
+	return form;
+};
+
+app.build.form.checkbox = function (question) {
+	form = "<form><fieldset><legend>" + question.content + "</legend>";
+	for (var i = 0; i < 5; i++) {
+		if (eval("question.response" + i) != "") {
+			var answer = "<label class='checkbox' for='response" + i + "'>" +
+				"<input type='checkbox' name='" + question.data_label + "' id=response" + i + " value='" + eval("question.response" + i) + "'>" +
+				eval("question.response" + i) +
+				"</label>";
+			form += answer;
+		};
+	};
+	form += "</fieldset></form>"
+	return form;
+};
+
+app.build.form.textarea = function (question) {
+	form = "<form><fieldset><legend>" + question.content + "</legend><textarea rows='3' style='width:99%;'></textarea>";
+	form += "</fieldset></form>"
+	return form;
+};
+
+app.build.form.defaultForm = function (question) {
+	return "<" + question.type + ">" + question.content + "</" + question.type + ">";
+};
+
 app.build.navChapterBar = function (arrayOfChapters) {
 
 	_.each(arrayOfChapters, function (i) {
@@ -94,9 +161,7 @@ app.build.navChapterBar = function (arrayOfChapters) {
 app.build.chapter = function (currentChapterId, appContents) {
 
 	console.log("Building Chapter", currentChapterId);
-	app.status.currentChapterElement = _.where(app.content, {
-		id: currentChapterId
-	})[0];
+	app.status.currentChapterElement = _.where(appContents, { id: currentChapterId })[0];
 	app.status.currentChapterContents = app.getChapterContents(currentChapterId, appContents);
 	app.status.numPagesInCurrentChapter = app.status.currentChapterContents.length;
 	app.status.currentPageIndex = 0;
@@ -105,17 +170,19 @@ app.build.chapter = function (currentChapterId, appContents) {
 	$("li.load-chapter").removeClass("active");
 	$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
 
-	$(".currentSlideCount").html("1 of " + app.status.numPagesInCurrentChapter);
+	// $(".currentSlideCount").html("1 of " + app.status.numPagesInCurrentChapter);
 
 	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 
-	$(".mainContainer, .pageNext, .chapterProgress, .currentSlideCount").show();
+	$(".mainContainer").show();
 
 };
 
 app.build.chapterProgressBar = function (position, total) {
+	$(".currentSlideCount").html(position + " of " + total);
 	$(".chapterProgressBar").width((position / total) * 100 + "%");
-	app.build.progressBarButtons();
+	app.build.progressBarButtons(position, total);
+	$(".chapterProgress, .currentSlideCount").show();
 }
 
 app.templates = {};
@@ -133,8 +200,36 @@ app.templates.threePanel = '' +
 
 app.actions = {};
 
-app.actions.setPage = function (pageContents) {
+app.actions.loadPage = function(index, moduleName, questionsArray) {
+	var questionForm;
 
+	index = index || 0;
+	app.current_question = questionsArray[index];
+
+	if (questionsArray[index] == undefined) {
+		app.status.currentChapterId = 976;
+		app.build.navChapterBar(app.arrayOfChapterIds(app.content));
+		app.build.chapter(app.status.currentChapterId, app.content);
+	} else {
+		questionForm = app.build.questionForm(questionsArray[index]);
+		$(".mainContainer").html(app.templates.fullPage);
+		$(".mainContent").html(questionForm);
+		app.build.chapterProgressBar(index + 1, questionsArray.length);
+		$("#save-button").on("click", function (ev) {
+			// app.actions.submitAnswer(index, module_name);
+			app.actions.loadPage(index + 1, moduleName, questionsArray);
+		});
+
+		$("#continue-button").on("click", function (ev) {
+			app.actions.loadPage(index + 1, moduleName, questionsArray);
+		});
+		$("button.pageBack").hide();
+		$("button.pageNext").hide();
+		$(".mainContainer").show();
+	}
+};
+
+app.actions.setPage = function (pageContents) {
 	mainContentsTemplate = function (headline, contents) {
 
 		var main_contents = "";
@@ -151,6 +246,7 @@ app.actions.setPage = function (pageContents) {
 
 		$(".mainContainer").html(app.templates.fullPage);
 		$(".mainContent").html(mainContentsTemplate(pageContents.pretty_name, pageContents.main_content));
+
 	} else {
 
 		$(".mainContainer").html(app.templates.threePanel);
@@ -200,14 +296,14 @@ app.actions.changePage = function (index_of_page) {
 
 	console.log("Page changed to ", index_of_page + 1, "of", app.status.numPagesInCurrentChapter);
 
-	$(".currentSlideCount").html(index_of_page + 1 + " of " + app.status.numPagesInCurrentChapter);
+	// $(".currentSlideCount").html(index_of_page + 1 + " of " + app.status.numPagesInCurrentChapter);
 
 	app.status.currentPageIndex = index_of_page;
 
 	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 	app.actions.setPage(app.status.currentChapterContents[app.status.currentPageIndex]);
-	app.build.loadSkinColorHighChart()
-	app.build.displayChoosenSkinType()
+	app.build.loadSkinColorHighChart();
+	app.build.displayChoosenSkinType();
 
 };
 
@@ -219,12 +315,6 @@ app.actions.goToChapter = function (chapterId, appContents) {
 	//     // Do nothing!
 	// }
 
-};
-
-app.actions.loadAssessment = function (id_of_questionnaire) {
-	if (app.config.assessments.exist) {
-		alert("Assessments have not yet been provided, please check in later!");
-	}
 };
 
 app.actions.loadImage = function (image, styles) {
@@ -334,7 +424,15 @@ app.build.goOnButton = function () {
 	$(".pageNext").html(app.text.goOn+' <i class= "icon-stop"></i>');
 
 	$("button.pageNext").on("click", function (ev) {
-		app.actions.loadAssessment();
+		var currentChapterIndex, nextChapter;
+
+		currentChapterIndex = _.indexOf(app.arrayOfChapterIds(appContent.nav_elements), app.status.currentChapterElement)
+		nextChapter = app.arrayOfChapterIds(appContent.nav_elements)[currentChapterIndex + 1]
+		if (nextChapter !== undefined) {
+			app.build.chapter(nextChapter.id, app.content);
+		} else {
+			alert("You are at the end of intervention!");
+		};
 	});
 
 	$("button.pageBack").on("click", function (ev) {
@@ -344,17 +442,16 @@ app.build.goOnButton = function () {
 	$("button.pageNext").show();
 
 };
+app.build.progressBarButtons = function (position, total) {
 
-app.build.progressBarButtons = function () {
-
-	var index_of_page = app.status.currentPageIndex;
-	var numPages = app.status.numPagesInCurrentChapter;
-	var lastPage = numPages - 1;
+	var index_of_page = position - 1;
+	var numPages = total;
+	var lastPage = total - 1;
 	$("button.pageNext").off("click");
 	$("button.pageBack").off("click");
 
 	// ONLY 'Go On' - on FIRST page of ONLY 1 page
-	if (app.status.numPagesInCurrentChapter == 1) {
+	if (total == 1) {
 		app.build.goOnButton();
 		$("button.pageBack").hide();
 	};
@@ -372,13 +469,11 @@ app.build.progressBarButtons = function () {
 	};
 
 	// 'Back' & 'Go On' - on the LAST page of many pages
-	if ((numPages > 1) && (index_of_page == lastPage)) {
+	if ((total > 1) && (index_of_page == lastPage)) {
 		app.build.goOnButton();
 		$("button.pageBack").show();
 	};
-
 };
-
 
 app.build.loadSkinColorHighChart = function () {
 	$(function () {
@@ -536,19 +631,19 @@ $(function () {
 	$('body').append(savingDiv);
 });
 
-$.fn.button.Constructor.prototype.toggle = function () {
+// $.fn.button.Constructor.prototype.toggle = function () {
 
-	$("#saving-alert").show().delay(500).fadeOut(500);
+// 	$("#saving-alert").show().delay(500).fadeOut(500);
 
-	var $parent = this.$element.closest('[data-toggle="buttons-radio"]')
+// 	var $parent = this.$element.closest('[data-toggle="buttons-radio"]')
 
-	$parent && $parent
-		.find('.active')
-		.removeClass('active')
-		.removeClass('btn-warning')
+// 	$parent && $parent
+// 		.find('.active')
+// 		.removeClass('active')
+// 		.removeClass('btn-warning')
 
-	this.$element.toggleClass('active')
+// 	this.$element.toggleClass('active');
 
-	this.$element.toggleClass('btn-warning')
-	this.$element.find("i.icon-ok.icon-white").toggleClass('hide');
-};
+// 	this.$element.toggleClass('btn-warning');
+// 	this.$element.find("i.icon-ok.icon-white").toggleClass('hide');
+// };
