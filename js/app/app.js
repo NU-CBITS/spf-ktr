@@ -89,11 +89,13 @@ app.build.modal = ''+
 			'<h1>Hold on Buckaroo!</h1>'+
 		'</div>'+
 		'<div class="modal-body">'+
-			'<p style="margin-top: 20px;" class="lead text-center">Are you sure you want to skip this question?</p>'+
+			'<p style="margin-top: 20px;" class="lead text-center">'+
+				'Do you want to skip this question without answering it?'+
+			'</p>'+
 		'</div>'+
 		'<div class="modal-footer">'+
-			'<button id="cancel" class="btn btn-large">Cancel</button>'+
-			'<button id="continue" class="btn btn-large btn-info">Continue</button>'+
+			'<button id="cancel" class="btn btn-large">Nope</button>'+
+			'<button id="continue" class="btn btn-large btn-info">Yes <i class="icon-play icon-white"></i></button>'+
 		'</div>'+
 	'</div>'
  
