@@ -83,6 +83,34 @@ app.getChapterContents = function (chapter_id, appContents) {
 
 app.build = {}
 app.build.form = {};
+app.build.modal = ''+
+	'<div id="confirmSkipping" class="modal">'+
+	 	'<div class="modal-header">'+
+			'<h1>Hold on Buckaroo!</h1>'+
+		'</div>'+
+		'<div class="modal-body">'+
+			'<p style="margin-top: 20px;" class="lead text-center">Are you sure you want to skip this question?</p>'+
+		'</div>'+
+		'<div class="modal-footer">'+
+			'<button id="cancel" class="btn btn-large">Cancel</button>'+
+			'<button id="continue" class="btn btn-large btn-info">Continue</button>'+
+		'</div>'+
+	'</div>'
+ 
+app.build.alertMessage = function (index, moduleName, currentQuestion, questionsArray, options) {
+	$('body').append(app.build.modal);
+	var modal = $('#confirmSkipping');
+	modal.modal('show');
+	modal.find("#cancel").on('click', function(event) {
+		modal.modal('hide');
+		modal.remove();
+	});
+	modal.find("#continue").on('click', function(event) {
+		modal.modal('hide');
+		modal.remove();
+		app.actions.loadPage(index, moduleName, questionsArray, options);
+	});
+};
 
 app.build.questionForm = function(question) {
 	var continueButton, form, saveButton;
@@ -206,11 +234,11 @@ app.templates.threePanel = '' +
 app.actions = {};
 
 app.actions.loadPage = function(index, moduleName, questionsArray, options) {
-	var progressBarOptions, questionForm;
+	var currentQuestion, progressBarOptions, questionForm;
 
 	options = options || {};
 	index = index || 0;
-	app.current_question = questionsArray[index];
+	app.current_question = currentQuestion = questionsArray[index];
 
 	if (questionsArray[index] == undefined) {
 		app.status.currentChapterId = 976;
@@ -223,8 +251,7 @@ app.actions.loadPage = function(index, moduleName, questionsArray, options) {
 
 		app.build.chapterProgressBar(index + 1, questionsArray.length, options);
 		$("#save-button").on("click", function (ev) {
-			// app.actions.submitAnswer(index, module_name);
-			app.actions.loadPage(index + 1, moduleName, questionsArray, options);
+			app.actions.submitAnswer(index, moduleName, currentQuestion, questionsArray, options);
 		});
 
 		$("#continue-button").on("click", function (ev) {
@@ -232,6 +259,20 @@ app.actions.loadPage = function(index, moduleName, questionsArray, options) {
 		});
 	}
 };
+
+app.actions.submitAnswer = function (index, moduleName, currentQuestion, questionsArray, options) {
+	var selectedAnswerIds = [];
+
+	_.each($(".mainContent input:checked"), function(element, index) {
+		selectedAnswerIds.push($(element).attr("id"));
+	});
+
+	if (_.isEmpty(selectedAnswerIds)) {
+		app.build.alertMessage(index + 1, moduleName, currentQuestion, questionsArray, options);
+	} else {
+		app.actions.loadPage(index + 1, moduleName, questionsArray, options);
+	};
+}
 
 app.actions.setPage = function (pageContents) {
 	mainContentsTemplate = function (headline, contents) {
