@@ -39,11 +39,15 @@ app.status.numPagesInCurrentChapter = null;
 
 
 app.start = function (appContents) {
-	var moduleName = "baseline"
-	
+	var moduleName = "baseline", progressBarOptions = {
+			hideBackButton: true,
+			hideNextButton: true,
+			hidePagination: true
+		};
+
 	app.content = appContents.nav_elements;
 	app.questions = appContents.questions;
-	app.actions.loadPage(0, moduleName, _.where(app.questions, { use: moduleName }));
+	app.actions.loadPage(0, moduleName, _.where(app.questions, { use: moduleName }), progressBarOptions);
 	
 	if (app.config.mode == "demo") {
 		app.build.navChapterBar(app.arrayOfChapterIds(app.content));
@@ -178,10 +182,11 @@ app.build.chapter = function (currentChapterId, appContents) {
 
 };
 
-app.build.chapterProgressBar = function (position, total) {
-	$(".currentSlideCount").html(position + " of " + total);
+app.build.chapterProgressBar = function (position, total, options) {
+	options = options || {};
+	if (!options.hidePagination) { $(".currentSlideCount").html(position + " of " + total); }
 	$(".chapterProgressBar").width((position / total) * 100 + "%");
-	app.build.progressBarButtons(position, total);
+	app.build.progressBarButtons(position, total, options);
 	$(".chapterProgress, .currentSlideCount").show();
 }
 
@@ -200,32 +205,31 @@ app.templates.threePanel = '' +
 
 app.actions = {};
 
-app.actions.loadPage = function(index, moduleName, questionsArray) {
-	var questionForm;
+app.actions.loadPage = function(index, moduleName, questionsArray, options) {
+	var progressBarOptions, questionForm;
 
+	options = options || {};
 	index = index || 0;
 	app.current_question = questionsArray[index];
 
 	if (questionsArray[index] == undefined) {
 		app.status.currentChapterId = 976;
-		app.build.navChapterBar(app.arrayOfChapterIds(app.content));
 		app.build.chapter(app.status.currentChapterId, app.content);
 	} else {
-		questionForm = app.build.questionForm(questionsArray[index]);
 		$(".mainContainer").html(app.templates.fullPage);
+		questionForm = app.build.questionForm(questionsArray[index]);
 		$(".mainContent").html(questionForm);
-		app.build.chapterProgressBar(index + 1, questionsArray.length);
+		$(".mainContainer").show();
+
+		app.build.chapterProgressBar(index + 1, questionsArray.length, options);
 		$("#save-button").on("click", function (ev) {
 			// app.actions.submitAnswer(index, module_name);
-			app.actions.loadPage(index + 1, moduleName, questionsArray);
+			app.actions.loadPage(index + 1, moduleName, questionsArray, options);
 		});
 
 		$("#continue-button").on("click", function (ev) {
-			app.actions.loadPage(index + 1, moduleName, questionsArray);
+			app.actions.loadPage(index + 1, moduleName, questionsArray, options);
 		});
-		$("button.pageBack").hide();
-		$("button.pageNext").hide();
-		$(".mainContainer").show();
 	}
 };
 
@@ -402,8 +406,10 @@ app.build.displayChoosenSkinType = function () {
 	});
 };
 
-app.build.backNextButtons = function() {
-	
+app.build.backNextButtons = function(options) {
+	$("button.pageNext").off("click");
+	$("button.pageBack").off("click");	
+
 	$(".pageNext").html(app.text.nextText+' <i class= "icon-chevron-right"></i>');
 	$(".pageBack").html('<i class="icon-chevron-left"></i> '+app.text.goBack);
 
@@ -415,12 +421,22 @@ app.build.backNextButtons = function() {
 		app.actions.changePage(app.status.currentPageIndex - 1)
 	});
 
-	$("button.pageNext").show();
+	if (options.hideNextButton) {
+		$("button.pageNext").hide();	
+	} else {
+		$("button.pageNext").show();
+	};
+
+	if (options.hideBackButton) {
+		$("button.pageBack").hide();	
+	} else {
+		$("button.pageBack").show();
+	};
 
 }
 
-app.build.goOnButton = function () {
-
+app.build.goOnButton = function (options) {
+	$("button.pageNext").off("click");
 	$(".pageNext").html(app.text.goOn+' <i class= "icon-stop"></i>');
 
 	$("button.pageNext").on("click", function (ev) {
@@ -439,39 +455,45 @@ app.build.goOnButton = function () {
 		app.actions.changePage(app.status.currentPageIndex - 1)
 	});
 
-	$("button.pageNext").show();
+	if (options.hideNextButton) {
+		$("button.pageNext").hide();	
+	} else {
+		$("button.pageNext").show();
+	};
 
 };
-app.build.progressBarButtons = function (position, total) {
-
+app.build.progressBarButtons = function (position, total, options) {
+	options = options || {};
 	var index_of_page = position - 1;
 	var numPages = total;
 	var lastPage = total - 1;
-	$("button.pageNext").off("click");
-	$("button.pageBack").off("click");
 
 	// ONLY 'Go On' - on FIRST page of ONLY 1 page
 	if (total == 1) {
-		app.build.goOnButton();
-		$("button.pageBack").hide();
+		options.hideBackButton = options.hideBackButton || true;
+		options.hideNextButton = options.hideNextButton || false;
+		app.build.goOnButton(options);
 	};
 
 	// ONLY 'Next' - on FIRST page of many pages
 	if ((index_of_page == 0) && (index_of_page != lastPage)) {
-		app.build.backNextButtons();
-		$("button.pageBack").hide();
+		options.hideBackButton = options.hideBackButton || true;
+		options.hideNextButton = options.hideNextButton || false;
+		app.build.backNextButtons(options);
 	};
 
 	// 'Back' & 'Next' - on a middle page of many pages
 	if ((index_of_page != 0) && (index_of_page != lastPage)) {
-		app.build.backNextButtons();
-		$("button.pageBack").show();
+		options.hideBackButton = options.hideBackButton || false;
+		options.hideNextButton = options.hideNextButton || false;
+		app.build.backNextButtons(options);
 	};
 
 	// 'Back' & 'Go On' - on the LAST page of many pages
 	if ((total > 1) && (index_of_page == lastPage)) {
-		app.build.goOnButton();
-		$("button.pageBack").show();
+		options.hideBackButton = options.hideBackButton || false;
+		options.hideNextButton = options.hideNextButton || false;
+		app.build.goOnButton(options);
 	};
 };
 
