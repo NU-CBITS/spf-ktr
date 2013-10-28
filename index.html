@@ -249,10 +249,10 @@
 
             routes: {
               "": "home",
-              "login": "login"
+              "sign_in": "signIn"
             },
 
-            login: function() {
+            signIn: function() {
               var signIn = '<div class="container-fluid">'+
                 '<div class="row-fluid">'+
                   '<form id="sign-up" class="offset3 span6">'+
@@ -284,7 +284,7 @@
                     break;
                   };
                 });
-                window.SPFKTRRouter.navigate("", {trigger: true})
+                SPFKTRRouter.navigate("", {trigger: true})
               });
             },
 
@@ -323,7 +323,6 @@
                 '</div>'
               $('body').css('background-color','transparent').html(tempate);
               app.actions.setScript(app);
-              window.SPFKTRRouter.stopListening();
             }
 
           });
