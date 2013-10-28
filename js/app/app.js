@@ -696,19 +696,19 @@ $(function () {
 	$('body').append(savingDiv);
 });
 
-// $.fn.button.Constructor.prototype.toggle = function () {
+$.fn.button.Constructor.prototype.toggle = function () {
 
-// 	$("#saving-alert").show().delay(500).fadeOut(500);
+	$("#saving-alert").show().delay(500).fadeOut(500);
 
-// 	var $parent = this.$element.closest('[data-toggle="buttons-radio"]')
+	var $parent = this.$element.closest('[data-toggle="buttons-radio"]')
 
-// 	$parent && $parent
-// 		.find('.active')
-// 		.removeClass('active')
-// 		.removeClass('btn-warning')
+	$parent && $parent
+		.find('.active')
+		.removeClass('active')
+		.removeClass('btn-warning')
 
-// 	this.$element.toggleClass('active');
+	this.$element.toggleClass('active');
 
-// 	this.$element.toggleClass('btn-warning');
-// 	this.$element.find("i.icon-ok.icon-white").toggleClass('hide');
-// };
+	this.$element.toggleClass('btn-warning');
+	this.$element.find("i.icon-ok.icon-white").toggleClass('hide');
+};
