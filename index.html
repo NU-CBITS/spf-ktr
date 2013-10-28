@@ -248,8 +248,8 @@
           SPFKTR.Router.Index = Backbone.Router.extend({
 
             routes: {
-              "": "home",
-              "sign_in": "signIn"
+              "": "signIn",
+              "diagnostic": "diagnostic"
             },
 
             signIn: function() {
@@ -284,11 +284,11 @@
                     break;
                   };
                 });
-                SPFKTRRouter.navigate("", {trigger: true})
+                SPFKTRRouter.navigate("#diagnostic", {trigger: true})
               });
             },
 
-            home: function() {
+            diagnostic: function() {
               var tempate = ''+
                 '<div class="navbar navbar-static-top">'+
                   '<div class="navbar-inner">'+
