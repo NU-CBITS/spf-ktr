@@ -1,23 +1,9 @@
 var app = {};
 app.config = {};
 app.config.mode = "demo"; //demo or normal or assessment
-app.config.language = "english";
-// app.config.language = "spanish";
 
 app.text = {};
 app.style = {};
-
-if (app.config.language == "english") {
-	app.text.goBack = "BACK"
-	app.text.nextText = "NEXT";
-	app.text.goOn = "GO ON";
-	app.style.loadChapterStyle = "font-size:1.2em;";
-} else {
-	app.text.goBack = "Regresar"
-	app.text.nextText = "Pr&oacute;ximo";
-	app.text.goOn = "Continuar";
-	app.style.loadChapterStyle = "font-size:1em;";
-};
 
 app.config.mainContent = {};
 app.config.mainContent.showTitle = false;
@@ -37,13 +23,13 @@ app.status.currentChapterElement = null;
 app.status.currentChapterContents = null;
 app.status.numPagesInCurrentChapter = null;
 
-
 app.start = function (appContents) {
+
 	var moduleName = "baseline", progressBarOptions = {
-			hideBackButton: true,
-			hideNextButton: true,
-			hidePagination: true
-		};
+		hideBackButton: true,
+		hideNextButton: true,
+		hidePagination: true
+	};
 
 	app.content = appContents.nav_elements;
 	app.questions = appContents.questions;
@@ -234,6 +220,32 @@ app.templates.threePanel = '' +
 	'</div>';
 
 app.actions = {};
+
+app.actions.setScript = function(app) {
+	var script= document.createElement('script');
+   	script.type= 'text/javascript';
+
+	if (app.config.language == "english") {
+		script.src = 'http://mohrlab.northwestern.edu/spf-ktr/build/js/app/content.js';
+	} else {
+		script.src = 'http://mohrlab.northwestern.edu/spf-ktr-e/build/js/app/content.js';
+	};
+	$.getScript(script.src, function(){ app.start(appContent); });
+}
+
+app.actions.setLanguage = function(language) {
+	if (language == "english") {
+		app.text.goBack = "BACK"
+		app.text.nextText = "NEXT";
+		app.text.goOn = "GO ON";
+		app.style.loadChapterStyle = "font-size:1.2em;";
+	} else {
+		app.text.goBack = "Regresar"
+		app.text.nextText = "Pr&oacute;ximo";
+		app.text.goOn = "Continuar";
+		app.style.loadChapterStyle = "font-size:1em;";
+	};
+};
 
 app.actions.loadPage = function(index, moduleName, questionsArray, options) {
 	var currentQuestion, progressBarOptions, questionForm;
