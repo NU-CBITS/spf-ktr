@@ -259,17 +259,40 @@
                     '<h1>Sign In</h1>'+
                     '<div class="row-fluid">'+
                       '<input name="username" type="text" class="span12 input-lg" placeholder="Username" autofocus>'+
-                      '<select name="language" class="input-lg">'+
+                      '<select id="language" name="language" class="input-lg">'+
                         '<option value="">Select Language</option>'+
                         '<option value="english">English</option>'+
-                        '<option value="espanol">Espa&ntilde;ol</option>'+
+                        '<option value="spanish">Espa&ntilde;ol</option>'+
                       '</select>'+
+                      '<div id="narrator-thumbnails"></div>'+
                       '<button id="submit" class="btn btn-large btn-info btn-block" type="submit">Sign in</button>'+
                     '</div>'+
                   '</form>'+
                 '</div>'+
               '</div>';
               $('body').css('background-color','#f5f5f5').html(signIn);
+              $('select#language').change(function(){
+                var htmlString, language, scopedThumnails, thumbnails;
+                language = $( "select#language option:selected" ).val();
+                thumbnails = [
+                  { href: 'looneytunes-tweety.gif', language:'spanish', name:'Tweety'},
+                  { href: 'Martian.jpg', language:'english', name:'Marvin'},
+                  { href: 'gallo_claudio.jpg', language:'english', name:'Gallo Claudio'},
+                  { href: 'coyote.gif', language:'english', name:'Coyote'}
+                ];
+                scopedThumbnails = _.where(thumbnails, {language: language});             
+                htmlString = "<label>Choose Your Narrator</label><div class='row-fluid'><ul class='thumbnails'>";
+                _.each(scopedThumbnails, function(element, index, list) {
+                  htmlString +=
+                  '<li class="span4">'+
+                    '<a href="#" class="thumbnail">'+
+                      '<img src="./js/vendor/images/'+element.href+'" alt="'+element.name+'" style="width: 260px; height: 180px;">'+
+                    '</a>'+
+                  '</li>'
+                });
+                htmlString += '</ul></div>';
+                $('div#narrator-thumbnails').html(htmlString);
+              });
               $('button#submit').click(event, function(event){
                 event.preventDefault();
                 var formArray = $("form#sign-up").serializeArray();
@@ -326,6 +349,7 @@
             }
 
           });
+
         }
       };
       SPFKTR.initialize();
