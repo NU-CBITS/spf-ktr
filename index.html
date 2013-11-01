@@ -231,6 +231,10 @@
     div.sk6b { background-color: #4F2E1F; }
     div.sk6C { background-color: #563B2A; }
 
+    a.active.thumbnail {
+      border-color: #0088cc;
+    }
+
   </style>
 
   <script>
@@ -258,14 +262,14 @@
                   '<form id="sign-up" class="offset3 span6">'+
                     '<h1>Sign In</h1>'+
                     '<div class="row-fluid">'+
-                      '<input name="username" type="text" class="span12 input-lg" placeholder="Username" autofocus>'+
-                      '<select id="language" name="language" class="input-lg">'+
-                        '<option value="">Select Language</option>'+
+                      '<input name="username" type="text" class="span12 input-lg" placeholder="Username" autofocus required>'+
+                      '<select id="language" name="language" class="input-lg" required>'+
+                        '<option value="" disabled>Select Language</option>'+
                         '<option value="english">English</option>'+
                         '<option value="spanish">Espa&ntilde;ol</option>'+
                       '</select>'+
                       '<div id="narrator-thumbnails"></div>'+
-                      '<button id="submit" class="btn btn-large btn-info btn-block" type="submit">Sign in</button>'+
+                      '<button id="submit" class="btn btn-large btn-info btn-block" type="submit" disabled="disabled">Sign in</button>'+
                     '</div>'+
                   '</form>'+
                 '</div>'+
@@ -292,6 +296,21 @@
                 });
                 htmlString += '</ul></div>';
                 $('div#narrator-thumbnails').html(htmlString);
+                $("a.thumbnail").on('click', function(event){
+                  var target = event.target;
+                  $("a.thumbnail").removeClass('active');
+                  $(target).addClass('active').parent('a').addClass('active');
+                  if ( ($("a.thumbnail.active").length == 1) && ($('input[name="username"').val().length != 0) ) {
+                    $('button#submit').removeAttr('disabled')
+                  };
+                })
+              });
+              $("form#sign-up input").on('change', function(){
+                if ( ($("a.thumbnail.active").length == 1) && ($('input[name="username"').val().length != 0) ) {
+                  $('button#submit').removeAttr('disabled')
+                } else {
+                  $('button#submit').attr('disabled', 'disabled')
+                }
               });
               $('button#submit').click(event, function(event){
                 event.preventDefault();
