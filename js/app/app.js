@@ -222,8 +222,8 @@ app.templates.threePanel = '' +
 app.actions = {};
 
 app.actions.setScript = function(app) {
-	var script= document.createElement('script');
-   	script.type= 'text/javascript';
+	var script = document.createElement('script');
+   	script.type = 'text/javascript';
 
 	if (app.config.language == "english") {
 		script.src = 'http://mohrlab.northwestern.edu/spf-ktr/build/js/app/content.js';

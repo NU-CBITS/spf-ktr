@@ -234,6 +234,10 @@
     a.active.thumbnail {
       border-color: #0088cc;
     }
+    .thumbnail .image-container {
+      height: 375px;
+      overflow-y: hidden;
+    }
 
   </style>
 
@@ -253,16 +257,24 @@
 
             routes: {
               "": "signIn",
+              "narrator/:id": "narrator",
               "diagnostic": "diagnostic"
             },
 
             signIn: function() {
-              var signIn = '<div class="container-fluid">'+
+              var signIn, username;
+
+              if ( (app !== undefined) && (app.config !== undefined) && (app.config.username !== undefined) ) { 
+                selectedUsername = app.config.username;
+              } else {
+                selectedUsername = "";
+              };
+              signIn = '<div class="container-fluid">'+
                 '<div class="row-fluid">'+
                   '<form id="sign-up" class="offset3 span6">'+
                     '<h1>Sign In</h1>'+
                     '<div class="row-fluid">'+
-                      '<input name="username" type="text" class="span12 input-lg" placeholder="Username" autofocus required>'+
+                      '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Username" autofocus required>'+
                       '<select id="language" name="language" class="input-lg" required>'+
                         '<option value="" disabled>Select Language</option>'+
                         '<option value="english">English</option>'+
@@ -275,38 +287,8 @@
                 '</div>'+
               '</div>';
               $('body').css('background-color','#f5f5f5').html(signIn);
-              $('select#language').change(function(){
-                var htmlString, language, scopedThumnails, thumbnails;
-                language = $( "select#language option:selected" ).val();
-                thumbnails = [
-                  { href: 'looneytunes-tweety.gif', language:'spanish', name:'Tweety'},
-                  { href: 'Martian.jpg', language:'english', name:'Marvin'},
-                  { href: 'gallo_claudio.jpg', language:'english', name:'Gallo Claudio'},
-                  { href: 'coyote.gif', language:'english', name:'Coyote'}
-                ];
-                scopedThumbnails = _.where(thumbnails, {language: language});             
-                htmlString = "<label>Choose Your Narrator</label><div class='row-fluid'><ul class='thumbnails'>";
-                _.each(scopedThumbnails, function(element, index, list) {
-                  htmlString +=
-                  '<li class="span4">'+
-                    '<a href="#" class="thumbnail">'+
-                      '<img src="./js/vendor/images/'+element.href+'" alt="'+element.name+'" style="width: 260px; height: 180px;">'+
-                    '</a>'+
-                  '</li>'
-                });
-                htmlString += '</ul></div>';
-                $('div#narrator-thumbnails').html(htmlString);
-                $("a.thumbnail").on('click', function(event){
-                  var target = event.target;
-                  $("a.thumbnail").removeClass('active');
-                  $(target).addClass('active').parent('a').addClass('active');
-                  if ( ($("a.thumbnail.active").length == 1) && ($('input[name="username"').val().length != 0) ) {
-                    $('button#submit').removeAttr('disabled')
-                  };
-                })
-              });
-              $("form#sign-up input").on('change', function(){
-                if ( ($("a.thumbnail.active").length == 1) && ($('input[name="username"').val().length != 0) ) {
+              $("form input[name='username'], form select[name='language']").on('change', function(){
+                if ( ($("select[name='language']").val() != null) && ($('input[name="username"]').val().length != 0) ) {
                   $('button#submit').removeAttr('disabled')
                 } else {
                   $('button#submit').attr('disabled', 'disabled')
@@ -326,12 +308,12 @@
                     break;
                   };
                 });
-                SPFKTRRouter.navigate("#diagnostic", {trigger: true})
+                SPFKTRRouter.navigate("#narrator/"+app.config.language, {trigger: true})
               });
             },
 
             diagnostic: function() {
-              var tempate = ''+
+              var template = ''+
                 '<div class="navbar navbar-static-top">'+
                   '<div class="navbar-inner">'+
                     '<div class="container-fluid">'+
@@ -363,10 +345,67 @@
                     '</div>'+
                   '</div>'+
                 '</div>'
-              $('body').css('background-color','transparent').html(tempate);
+              $('body').css('background-color','transparent').html(template);
               app.actions.setScript(app);
-            }
+            },
 
+            narrator: function(language) {
+              var header, listItemThumbnails = '', listenText, offset = '', selectText, templage, thumbnails;
+
+              if (language == "english") {
+                header = "Estrategias de Protección contra el Sol para Receptores de Trasplante de Riñón";
+                listenText = "Listen";
+                selectText = "Select your guide";
+                thumbnails = [
+                  { href: 'narrator1.jpg', language:'english', name:'Yanina'},
+                  { href: 'narrator2.jpg', language:'english', name:'Sheano'},
+                  { href: 'narrator3.jpg', language:'english', name:'Katie'}
+                ];
+              } else {
+                header = "Sun Protection Strategies for Kidney Transplant Recipient";
+                listenText = "Escuchar";
+                selectText = "Seleccione su guia";
+                thumbnails = [ { href: 'narrator4.jpg', language:'spanish', name:'Francisco'} ];
+              };
+              _.each(thumbnails, function(element, index, list) {
+                if (list.length == 1) { offset += 'offset4' };
+                listItemThumbnails +=
+                '<li class="span4 '+offset+'">'+
+                  '<div class="thumbnail">'+
+                    '<div class="image-container">'+
+                      '<img src="./js/vendor/images/'+element.href+'" alt="'+element.name+'" style="width: 100%">'+
+                    '</div>'+
+                    '<div class="caption">'+
+                      '<div class="btn-toolbar">'+
+                        '<button class="btn btn-large btn-block">'+element.name+'</button>'+
+                      '</div>'+
+                    '</div>'+
+                  '</div>'+
+                '</li>'
+              });
+              listItemThumbnails += '</ul></div>';
+
+              template = '<div class="container-fluid">'+
+                '<div class="row-fluid">'+
+                  '<h1>'+header+'</h1>'+
+                  '<form class="row-fluid">'+
+                    '<p class="lead">'+listenText+'</p>'+
+                    '<p class="lead">'+selectText+'</p>'+
+                    '<div class="btn-toolbar">'+
+                      '<div data-toggle="buttons-radio">'+listItemThumbnails+'</div>'+
+                    '</div>'+
+                    '<div class="btn-toolbar">'+
+                      '<a href="#" class="btn btn-large pull-left">Back</a><a href="#diagnostic" id="continue" class="btn btn-large btn-info pull-right" disabled>Continue</a>'+
+                    '</div>'+
+                  '</form>'+
+                '</div>'+
+              '</div>';
+              $('body').css('background-color','transparent').html(template);              
+
+              $(".caption button").on('click', function(event){
+                $('a#continue').removeAttr('disabled')
+              })
+            }
           });
 
         }
