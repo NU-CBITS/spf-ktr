@@ -231,9 +231,6 @@
     div.sk6b { background-color: #4F2E1F; }
     div.sk6C { background-color: #563B2A; }
 
-    a.active.thumbnail {
-      border-color: #0088cc;
-    }
     .thumbnail .image-container {
       background-color: black;
       height: 325px;
@@ -378,7 +375,7 @@
                     '</div>'+
                     '<div class="caption">'+
                       '<div class="btn-toolbar">'+
-                        '<button class="btn btn-large btn-block">'+element.name+'</button>'+
+                        '<button type="button" class="btn btn-large btn-block">'+element.name+'</button>'+
                       '</div>'+
                     '</div>'+
                   '</div>'+
@@ -394,11 +391,23 @@
                     '<p class="lead">'+selectText+'</p>'+
                     '<div class="span12">'+
                       '<div class="btn-toolbar offset1 span10">'+
-                        '<div data-toggle="buttons-radio">'+listItemThumbnails+'</div>'+
+                        '<div class="btn-group" style="width: 100%;" data-toggle="buttons-radio">'+listItemThumbnails+'</div>'+
                       '</div>'+
                     '</div>'+
                     '<div class="btn-toolbar">'+
-                      '<a href="#" class="btn btn-large pull-left">Back</a><a href="#diagnostic" id="continue" class="btn btn-large btn-info pull-right" disabled>Continue</a>'+
+                      '<a href="#" class="btn btn-large pull-left"><i class="icon-chevron-left"></i> '+function(){
+                        if (app.config.language == "english") {
+                          return "Back" 
+                        } else {
+                          return "Regresar" 
+                        }
+                      }()+'</a><a href="#diagnostic" id="continue" class="btn btn-large btn-info pull-right" disabled>'+function(){
+                        if (app.config.language == "english") {
+                          return "Continue" 
+                        } else {
+                          return "Continuar" 
+                        }
+                      }()+' <i class="icon-chevron-right icon-white"></i></a>'+
                     '</div>'+
                   '</form>'+
                 '</div>'+
