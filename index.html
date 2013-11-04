@@ -235,7 +235,8 @@
       border-color: #0088cc;
     }
     .thumbnail .image-container {
-      height: 375px;
+      background-color: black;
+      height: 325px;
       overflow-y: hidden;
     }
 
@@ -350,30 +351,30 @@
             },
 
             narrator: function(language) {
-              var header, listItemThumbnails = '', listenText, offset = '', selectText, templage, thumbnails;
+              var header, listItemThumbnails = '', listenText, offset = '', selectText, templage, thumbnailClass = "span4", thumbnails;
 
               if (language == "english") {
                 header = "Estrategias de Protección contra el Sol para Receptores de Trasplante de Riñón";
                 listenText = "Listen";
                 selectText = "Select your guide";
                 thumbnails = [
-                  { href: 'narrator1.jpg', language:'english', name:'Yanina'},
-                  { href: 'narrator2.jpg', language:'english', name:'Sheano'},
-                  { href: 'narrator3.jpg', language:'english', name:'Katie'}
+                  { href: 'narrator1.jpg', name:'Yanina'},
+                  { href: 'narrator2.jpg', name:'Sheano'},
+                  { href: 'narrator3.jpg', name:'Katie'}
                 ];
               } else {
                 header = "Sun Protection Strategies for Kidney Transplant Recipient";
                 listenText = "Escuchar";
                 selectText = "Seleccione su guia";
-                thumbnails = [ { href: 'narrator4.jpg', language:'spanish', name:'Francisco'} ];
+                thumbnails = [ { href: 'narrator4.jpg', name:'Francisco'} ];
               };
               _.each(thumbnails, function(element, index, list) {
-                if (list.length == 1) { offset += 'offset4' };
+                if (list.length == 1) { thumbnailClass = 'span3'; offset += 'offset4' };
                 listItemThumbnails +=
-                '<li class="span4 '+offset+'">'+
+                '<li class="'+ thumbnailClass+' '+offset+'">'+
                   '<div class="thumbnail">'+
                     '<div class="image-container">'+
-                      '<img src="./js/vendor/images/'+element.href+'" alt="'+element.name+'" style="width: 100%">'+
+                      '<img src="./js/vendor/images/'+element.href+'" alt="'+element.name+'">'+
                     '</div>'+
                     '<div class="caption">'+
                       '<div class="btn-toolbar">'+
@@ -391,8 +392,10 @@
                   '<form class="row-fluid">'+
                     '<p class="lead">'+listenText+'</p>'+
                     '<p class="lead">'+selectText+'</p>'+
-                    '<div class="btn-toolbar">'+
-                      '<div data-toggle="buttons-radio">'+listItemThumbnails+'</div>'+
+                    '<div class="span12">'+
+                      '<div class="btn-toolbar offset1 span10">'+
+                        '<div data-toggle="buttons-radio">'+listItemThumbnails+'</div>'+
+                      '</div>'+
                     '</div>'+
                     '<div class="btn-toolbar">'+
                       '<a href="#" class="btn btn-large pull-left">Back</a><a href="#diagnostic" id="continue" class="btn btn-large btn-info pull-right" disabled>Continue</a>'+
