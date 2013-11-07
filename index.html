@@ -272,7 +272,7 @@
                   '<form id="sign-up" class="offset3 span6">'+
                     '<h1>Sign In</h1>'+
                     '<div class="row-fluid">'+
-                      '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Username" autofocus required>'+
+                      '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Username" autofocus>'+
                       '<select id="language" name="language" class="input-lg" required>'+
                         '<option value="" disabled>Select Language</option>'+
                         '<option value="english">English</option>'+
@@ -285,8 +285,8 @@
                 '</div>'+
               '</div>';
               $('body').css('background-color','#f5f5f5').html(signIn);
-              $("form input[name='username'], form select[name='language']").on('change', function(){
-                if ( ($("select[name='language']").val() != null) && ($('input[name="username"]').val().length != 0) ) {
+              $("form select[name='language']").on('change', function(){
+                if ( ($("select[name='language']").val() != null)) {
                   $('button#submit').removeAttr('disabled')
                 } else {
                   $('button#submit').attr('disabled', 'disabled')
