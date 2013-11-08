@@ -402,10 +402,10 @@ app.actions.loadAudio = function (audiofile) {
 		// Add in narrarator
 		return '<audio style=\"width:100%;padding-top: 10px;\" controls autoplay><source src="' + app.audio_url + "Final Audio/" + app.config.voice_over + '/' + mp4_location + '" type="audio/mp3">Your browser does not support the video tag.</video>'
 	};
-	if ($('.mainContent a.audio audio').length == 0) {
-		$('.mainContent a.audio').append(audioTemplate(audiofile.replace("http://", "").replace("/", "")));
+	if ($('.mainContent #audio-container').length == 0) {
+		$('.mainContent a.audio').after('<div id="audio-container">'+audioTemplate(audiofile.replace("http://", "").replace("/", ""))+'</div>');
 	};
-	$('.mainContent a.audio audio')[0].play(); // bc in android html5 autoplay doesn't work
+	$('.mainContent #audio-container audio')[0].play(); // bc in android html5 autoplay doesn't work
 	// $(".topRight").html(audioTemplate(audiofile.replace("http://", "").replace("/", "")));
 };
 
