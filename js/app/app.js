@@ -400,8 +400,8 @@ app.actions.loadAudio = function (audiofile) {
 	var audioTemplate = function (mp4_location) {
 		// return '<audio style=\"width:100%;\" controls autoplay><source src="' + app.audio_url + mp4_location + '" type="audio/mp3">Your browser does not support the video tag.</video>'
 		// Add in narrarator
-		return '<audio style=\"width:100%;padding-top: 10px;\" controls autoplay><source src="' + app.audio_url + app.config.voice_over + '/' + mp4_location + '" type="audio/mp3">Your browser does not support the video tag.</video>'
-	}
+		return '<audio style=\"width:100%;padding-top: 10px;\" controls autoplay><source src="' + app.audio_url + "Final Audio/" + app.config.voice_over + '/' + mp4_location + '" type="audio/mp3">Your browser does not support the video tag.</video>'
+	};
 	if ($('.mainContent a.audio audio').length == 0) {
 		$('.mainContent a.audio').append(audioTemplate(audiofile.replace("http://", "").replace("/", "")));
 	};
