@@ -278,7 +278,6 @@
                         '<option value="english">English</option>'+
                         '<option value="spanish">Espa&ntilde;ol</option>'+
                       '</select>'+
-                      '<div id="narrator-thumbnails"></div>'+
                       '<button id="submit" class="btn btn-large btn-info btn-block" type="submit" disabled="disabled">Sign in</button>'+
                     '</div>'+
                   '</form>'+
@@ -375,7 +374,7 @@
                     '</div>'+
                     '<div class="caption">'+
                       '<div class="btn-toolbar">'+
-                        '<button type="button" class="btn btn-large btn-block">'+element.name+'</button>'+
+                        '<button type="button" value="'+element.name.toLowerCase()+'" class="btn btn-large btn-block">'+element.name+'</button>'+
                       '</div>'+
                     '</div>'+
                   '</div>'+
@@ -412,9 +411,10 @@
                   '</form>'+
                 '</div>'+
               '</div>';
-              $('body').css('background-color','transparent').html(template);              
-
+              $('body').css('background-color','transparent').html(template);  
               $(".caption button").on('click', function(event){
+                var target = $(event.target)
+                app.config.voice_over = target.val();
                 $('a#continue').removeAttr('disabled')
               })
             }

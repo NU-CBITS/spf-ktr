@@ -81,7 +81,7 @@ app.build.modal = ''+
 		'</div>'+
 		'<div class="modal-footer">'+
 			'<button id="cancel" class="btn btn-large">Nope</button>'+
-			'<button id="continue" class="btn btn-large btn-info">Yes <i class="icon-play icon-white"></i></button>'+
+			'<button id="continue" autofocus class="btn btn-large btn-info">Yes <i class="icon-play icon-white"></i></button>'+
 		'</div>'+
 	'</div>'
  
@@ -398,7 +398,8 @@ app.actions.loadVideo = function (video) {
 app.actions.loadAudio = function (audiofile) {
 
 	var audioTemplate = function (mp4_location) {
-		return '<audio style=\"width:100%;\" controls autoplay><source src="' + app.audio_url + mp4_location + '" type="audio/mp3">Your browser does not support the video tag.</video>'
+		// Add in narrarator
+		return '<audio style=\"width:100%;\" controls autoplay><source src="' + app.audio_url + app.config.voice_over + '/' + mp4_location + '" type="audio/mp3">Your browser does not support the video tag.</video>'
 	}
 
 	$(".topRight").html(audioTemplate(audiofile.replace("http://", "").replace("/", "")));
