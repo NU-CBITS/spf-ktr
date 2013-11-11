@@ -166,11 +166,13 @@ app.build.form.defaultForm = function (question) {
 };
 
 app.build.navChapterBar = function (arrayOfChapters) {
+	var coverPageEnglish = _.where(arrayOfChapters, { id: 977 })[0];
+	var coverPageSpanish = _.where(arrayOfChapters, { id: 980 })[0];
+
+	arrayOfChapters = _.without(arrayOfChapters, coverPageEnglish, coverPageSpanish);
 
 	_.each(arrayOfChapters, function (i) {
-
 		$("#main_nav").append('<li class="load-chapter" data-id="' + i.id + '"><a href="#' + i.pretty_name + '" style="'+app.style.loadChapterStyle+'">' + i.pretty_name + '</a></li>');
-
 	});
 
 	$(".load-chapter").on("click", function (ev) {
