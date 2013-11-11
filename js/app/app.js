@@ -510,9 +510,9 @@ app.build.goOnButton = function (options) {
 			app.build.chapter(nextChapter.id, app.content);
 		} else {
 			if (app.config.language == "spanish") {
-				alert("You have completed the intervention!");
-			} else {
 				alert("¡Usted ha completado la intervención!");
+			} else {
+				alert("You have completed the intervention!");
 			};
 		};
 	});
