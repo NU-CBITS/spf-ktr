@@ -72,7 +72,15 @@ app.build.form = {};
 app.build.modal = ''+
 	'<div id="confirmSkipping" class="modal">'+
 	 	'<div class="modal-header">'+
-			'<h1>Hold on Buckaroo!</h1>'+
+			'<h1>'+
+				function(){
+					if (app.config.language == "spanish") {
+						return 'Antes de continuar...'
+					} else {
+						return 'Before continuing...'
+					};
+				}()+
+			'</h1>'+
 		'</div>'+
 		'<div class="modal-body">'+
 			'<p style="margin-top: 20px;" class="lead text-center">'+
