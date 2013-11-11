@@ -509,7 +509,11 @@ app.build.goOnButton = function (options) {
 		if (nextChapter !== undefined) {
 			app.build.chapter(nextChapter.id, app.content);
 		} else {
-			alert("You are at the end of intervention!");
+			if (app.config.language == "spanish") {
+				alert("You have completed the intervention!");
+			} else {
+				alert("¡Usted ha completado la intervención!");
+			};
 		};
 	});
 
