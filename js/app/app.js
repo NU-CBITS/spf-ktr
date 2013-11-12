@@ -428,6 +428,7 @@ app.actions.loadAudioImage = function (filename) {
 	};
 
 	$(".topRight").html(audioImageTemplate(filename.replace("http://", "").replace("/", "")));
+	$('.topRight audio')[0].play(); // bc in android html5 autoplay doesn't work
 };
 
 app.actions.resizeIfNecessary = function (event) {
