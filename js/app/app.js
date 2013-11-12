@@ -253,7 +253,7 @@ app.actions.setLanguage = function(language) {
 		app.text.goBack = "Regresar"
 		app.text.nextText = "Pr&oacute;ximo";
 		app.text.goOn = "Continuar";
-		app.style.loadChapterStyle = "font-size:1em;";
+		app.style.loadChapterStyle = "font-size:1.2em;";
 	};
 };
 
