@@ -401,6 +401,7 @@ app.actions.loadVideo = function (video) {
 		return '<video style=\"width:100%;\" controls autoplay><source src="' + app.videos_url + mp4_location + '" type="video/mp4">Your browser does not support the video tag.</video>'
 	}
 	$(".topRight").html(videoTemplate(video.replace("http://", "").replace("/", "")));
+	$('.topRight audio')[0].play(); // bc in android html5 autoplay doesn't work
 };
 
 
