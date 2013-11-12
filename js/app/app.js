@@ -24,7 +24,7 @@ app.status.currentChapterContents = null;
 app.status.numPagesInCurrentChapter = null;
 
 app.start = function (appContents) {
-	debugger
+
 	var moduleName = "baseline", progressBarOptions = {
 		hideBackButton: true,
 		hideNextButton: true,
@@ -34,7 +34,7 @@ app.start = function (appContents) {
 	app.content = appContents.nav_elements;
 	// app.questions = appContents.questions; // This is commented out so we skip the baseline/diagnostic
 	app.actions.loadPage(0, moduleName, _.where(app.questions, { use: moduleName }), progressBarOptions);
-	debugger
+
 	if (app.config.mode == "demo") {
 		app.build.navChapterBar(app.arrayOfChapterIds(app.content));
 	};
