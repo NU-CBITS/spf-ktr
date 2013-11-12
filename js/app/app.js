@@ -423,7 +423,7 @@ app.actions.loadAudioImage = function (filename) {
 
 	var audioImageTemplate = function (filename) {
 		var src = '' + app.images_url + filename + '.jpg';
-		return '<img src="' + app.images_url + filename + '.jpg" onload="app.actions.resizeIfNecessary(event);"/><br/><audio style=\"width:100%;\" controls autoplay><source src="' + app.audio_url + filename + '.mp3" type="audio/mp3">Your browser does not support the video tag.</audio>'
+		return '<img src="' + app.images_url + filename + '.jpg" onload="app.actions.resizeIfNecessary(event);"/><br/><audio style=\"width:100%;\" controls autoplay><source src="' + app.audio_url + "Final Audio/" + app.config.voice_over + '/' + filename + '.mp3" type="audio/mp3">Your browser does not support the video tag.</audio>'
 	};
 
 	$(".topRight").html(audioImageTemplate(filename.replace("http://", "").replace("/", "")));
