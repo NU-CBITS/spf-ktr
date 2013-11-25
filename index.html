@@ -280,17 +280,17 @@
               signIn = '<div class="container-fluid">'+
                 '<div class="row-fluid">'+
                   '<form id="sign-up" class="offset3 span6">'+
-                    '<h1>Sign In</h1>'+
+                    '<h1>Sign In / Registrarse</h1>'+
                     '<div class="row-fluid">'+
-                      '<label for="username">Username</label>'+
-                      '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Username" autofocus>'+
+                      '<label for="username">Username / Nombre de usuario</label>'+
+                      '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Your username / Su nombre de usuario" autofocus>'+
                       '<label for="email">Email</label>'+
-                      '<input name="email" type="email" value="'+selectedEmail+'" class="span12 input-lg" placeholder="Email">'+
+                      '<input name="email" type="email" value="'+selectedEmail+'" class="span12 input-lg" placeholder="Your email / Su correo electrónico">'+
                       '<select id="language" name="language" class="input-lg">'+
                         '<option value="english">English</option>'+
                         '<option value="spanish">Espa&ntilde;ol</option>'+
                       '</select>'+
-                      '<button id="submit" class="btn btn-large btn-info btn-block" type="submit">Sign in</button>'+
+                      '<button id="submit" class="btn btn-large btn-info btn-block" type="submit">Sign in / Registrarse</button>'+
                     '</div>'+
                   '</form>'+
                 '</div>'+
@@ -309,7 +309,6 @@
                     app.config.username = inputElement['value'];
                     break;
                   case "email":
-                    debugger;
                     app.config.email = inputElement['value'];
                     break;
                   };
@@ -356,11 +355,10 @@
             },
 
             narrator: function(language) {
-              var header, listItemThumbnails = '', listenText, offset = '', selectText, templage, thumbnailClass = "span4", thumbnails;
+              var header, listItemThumbnails = '', offset = '', selectText, templage, thumbnailClass = "span4", thumbnails;
 
               if (language == "english") {
                 header = "Sun Protection Strategies for Kidney Transplant Recipient";
-                listenText = "Listen";
                 selectText = "Select your guide";
                 thumbnails = [
                   { href: 'narrator1.jpg', name:'Yanina'},
@@ -369,7 +367,6 @@
                 ];
               } else {
                 header = "Estrategias de Protección contra el Sol para Receptores de Trasplante de Riñón";
-                listenText = "Escuchar";
                 selectText = "Seleccione su guia";
                 thumbnails = [ { href: 'narrator4.jpg', name:'Francisco'} ];
               };
@@ -395,7 +392,6 @@
                 '<div class="row-fluid">'+
                   '<h1>'+header+'</h1>'+
                   '<form class="row-fluid">'+
-                    '<p class="lead">'+listenText+'</p>'+
                     '<p class="lead">'+selectText+'</p>'+
                     '<div class="span12">'+
                       '<div class="btn-toolbar offset1 span10">'+
