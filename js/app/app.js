@@ -83,7 +83,7 @@ app.build.stringOfClicks = "a.animation, a.audio, a.audioImage, a.definition, a.
 app.build.form = {};
 app.build.modal = ''+
 	'<div id="confirmSkipping" class="modal">'+
-	 	'<div class="modal-header">'+
+		'<div class="modal-header">'+
 			'<h1>'+
 				function(){
 					if (app.config.language == "spanish") {
@@ -119,7 +119,6 @@ app.build.alertMessage = function (index, moduleName, currentQuestion, questions
 		app.actions.loadPage(index, moduleName, questionsArray, options);
 	});
 };
-
 app.build.questionForm = function(question) {
 	var continueButton, form, saveButton;
 	saveButton = "<div class='clearfix'></div><input autofocus type='submit' name='submit' value='Submit' class='btn btn-large' id='save-button'/>";
@@ -132,7 +131,7 @@ app.build.questionForm = function(question) {
 	case "checkbox":
 		form = app.build.form.checkbox(question);
 		form += saveButton
-		break;	
+		break;  
 	case "text":
 		form = app.build.form.textarea(question);
 		form += saveButton
@@ -224,7 +223,9 @@ app.build.chapterProgressBar = function (position, total, options) {
 	$(".chapterProgressBar").width((position / total) * 100 + "%");
 	app.build.progressBarButtons(position, total, options);
 	$(".chapterProgress, .currentSlideCount").show();
-}
+	app.actions.recordUserSubmission('form#sun-exposure-checklist-form-1, form#sun-exposure-checklist-form-2');
+	app.actions.recordUserSubmission('form#remember-checklist');
+};
 
 app.templates = {};
 app.templates.fullPage = '<div class="span12 mainContent"></div>';
@@ -243,7 +244,7 @@ app.actions = {};
 
 app.actions.setScript = function(app) {
 	var script = document.createElement('script');
-   	script.type = 'text/javascript';
+	script.type = 'text/javascript';
 
 	if (app.config.language == "english") {
 		script.src = 'http://mohrlab.northwestern.edu/spf-ktr/build/js/app/content.js';
@@ -265,6 +266,18 @@ app.actions.setLanguage = function(language) {
 		app.text.goOn = "Continuar";
 		app.style.loadChapterStyle = "font-size:1.2em;";
 	};
+};
+
+app.actions.sendEmail = function(data){
+	$.ajax({
+	  type: "POST",
+	  url: "http://mohrlab.northwestern.edu/utility/sendmail.cfm",
+	  data: { mailJSON: JSON.stringify(data) },
+	  success: function(data, textStatus, jqXHR) {
+	  	console.log("success", data);
+	  	alert("Email was sent!");
+	  }
+	});
 };
 
 app.actions.loadPage = function(index, moduleName, questionsArray, options) {
@@ -306,7 +319,7 @@ app.actions.submitAnswer = function (index, moduleName, currentQuestion, questio
 	} else {
 		app.actions.loadPage(index + 1, moduleName, questionsArray, options);
 	};
-}
+};
 
 app.actions.setPage = function (pageContents) {
 	mainContentsTemplate = function (headline, contents) {
@@ -371,10 +384,24 @@ app.actions.setPage = function (pageContents) {
 	app.actions.recordUserActions(app.build.stringOfClicks);
 };
 
+app.actions.recordUserSubmission = function(forms) {
+
+	_.each($(forms), function(value, key, list){
+		var activeButtons = $(value).find('label .btn.btn-warning');
+		
+		arrayOfAcitivies = app[value.id] = [];
+		_.each($(activeButtons), function(value, key, list){
+			var activity = $(value).parent('label').text().replace(/\s+/g, ' ');
+
+			arrayOfAcitivies.push(activity);
+		});
+	});
+};
+
 app.actions.recordUserActions = function(tagsList) {
 	$(tagsList).on('click', function(event) {
 		var userClick;
-		// debugger
+
 		userClick = {
 			user_id: app.config.username,
 			invervention_id: app.inverventionId,
@@ -498,6 +525,90 @@ app.actions.loadId = function (id_to_load, appContents) {
 
 };
 
+app.actions.createSentence = function(array) {
+	var sentence = "";
+
+	_.each(array, function(value, key, list) {
+		value = value.trim().toLowerCase();
+		value = "<span style='text-decoration: underline;'>"+value+"</span>";
+
+		switch(key) {
+		case 0:
+			sentence = sentence + value;
+			break;
+		case (list.length - 1):
+			sentence = sentence + ", and " + value;
+			break;
+		default:
+			sentence = sentence + ", " + value;
+		};
+	});
+
+	return sentence;
+};
+
+app.actions.completed = function() {
+	var checklistArray, exposureChecklistArray, rememberCheckListArray;
+
+	app["sun-exposure-checklist-form-1"] = app["sun-exposure-checklist-form-1"] || [];
+	app["sun-exposure-checklist-form-2"] = app["sun-exposure-checklist-form-2"] || [];
+	app["remember-checklist"] = app["remember-checklist"] || [];
+
+	exposureChecklistArray = app["sun-exposure-checklist-form-1"].concat(app["sun-exposure-checklist-form-2"]);
+	exposureChecklist = app.actions.createSentence(exposureChecklistArray);
+
+	rememberChecklist = app.actions.createSentence(app["remember-checklist"]);
+
+	return '<p class="lead">I hope that you have learned that it is important to use sun protection and ways to protect yourself. You asked me to send you this as a reminder to use sun protection.</p>'+
+	'<p class="lead">Your skin tone number is '+app.skinColor+'. (risks page 4)</p>'+
+	'<p class="lead">This means that when you are planning on being outdoors '+exposureChecklist+', it is important for you to remember to apply a sunscreen with an SPF of 50 or more about 20 minutes before you go out. Some of the reminders that you thought would work for you are: (score page 3) '+rememberChecklist+'</p>'+
+	'<p class="lead">Using sunscreen will keep you from getting skin cancer. Congratulations on your decision to keeping your skin healthy.</p>'+
+	'<p><img src="./js/vendor/images/june_k_robinson_signature.png" alt="June K Robinson, MD" height="100" width="400"></p>'+
+	'<p>June K. Robinson, MD</p>'+
+	'<p>Northwestern University Feinberg School of Medicine</p>'+
+	'<p>Department of Dermatology</p>'
+};
+
+app.actions.loadSummary = function() {
+	var modal, page = app.actions.completed(), results;
+
+	if (app.config.language == "spanish") {
+		results = "¡Felicidades!";
+	} else {
+		results = "Congratulations!";
+	};
+
+	// modal
+	modal = ''+
+	'<div id="email-modal" class="modal hide fade" style="width: 90%;left: 29%;">'+
+		'<div class="modal-header">'+
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+			'<h3>'+results+'</h3>'+
+		'</div>'+
+		'<div class="modal-body" style="max-height: 600px;">'+page+'</div>'+
+		'<div class="modal-footer">'+
+			'<a href="#" onClick="$(\'#email-modal\').modal(\'hide\');$(\'#email-modal\').remove();app.emailSent = true;return false;" class="btn btn-large">Close</a>'+
+		'</div>'+
+	'</div>';
+	$(".mainContainer").append(modal);
+	$('#email-modal.modal').modal('show')
+
+	// sending email
+	data = {
+		"from" : "informme@cbits.northwestern.edu",
+		"to" : app.config.email,
+		"bcc" : "j-duffecy@northwestern.edu",
+		"subject" : app.inverventionId+" Summary of Results",
+		"contents" : page,
+		// "additional_contents": additional_contents,
+		"mime" : "html",
+		"saveAsPDFAndLink": true
+	};
+	if (!app.emailSent) {
+		app.actions.sendEmail(data);
+	};
+};
+
 // Additional functions and overrides by wehrley
 
 app.actions.setSkinTone = function (link) {
@@ -509,6 +620,7 @@ app.actions.setSkinTone = function (link) {
 app.build.displayChoosenSkinType = function () {
 	$(function () {
 		var skinColors = $('.skin-colors');
+
 		if ((skinColors.length === 1) && (app.skinColor)) {
 			$('button[data-skin-color="' + app.skinColor + '"]').addClass('active').addClass('btn-warning');
 		};
@@ -517,7 +629,7 @@ app.build.displayChoosenSkinType = function () {
 
 app.build.backNextButtons = function(options) {
 	$("button.pageNext").off("click");
-	$("button.pageBack").off("click");	
+	$("button.pageBack").off("click");  
 
 	$(".pageNext").html(app.text.nextText+' <i class= "icon-chevron-right"></i>');
 	$(".pageBack").html('<i class="icon-chevron-left"></i> '+app.text.goBack);
@@ -531,13 +643,13 @@ app.build.backNextButtons = function(options) {
 	});
 
 	if (options.hideNextButton) {
-		$("button.pageNext").hide();	
+		$("button.pageNext").hide();    
 	} else {
 		$("button.pageNext").show();
 	};
 
 	if (options.hideBackButton) {
-		$("button.pageBack").hide();	
+		$("button.pageBack").hide();    
 	} else {
 		$("button.pageBack").show();
 	};
@@ -556,11 +668,7 @@ app.build.goOnButton = function (options) {
 		if (nextChapter !== undefined) {
 			app.build.chapter(nextChapter.id, app.content);
 		} else {
-			if (app.config.language == "spanish") {
-				alert("¡Usted ha completado la intervención!");
-			} else {
-				alert("You have completed the intervention!");
-			};
+			app.actions.loadSummary();
 		};
 	});
 
@@ -569,7 +677,7 @@ app.build.goOnButton = function (options) {
 	});
 
 	if (options.hideNextButton) {
-		$("button.pageNext").hide();	
+		$("button.pageNext").hide();    
 	} else {
 		$("button.pageNext").show();
 	};
