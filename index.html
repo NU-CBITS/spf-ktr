@@ -265,20 +265,28 @@
             },
 
             signIn: function() {
-              var signIn, username;
+              var signIn, selectedUsername, selectedEmail;
 
               if ( (app !== undefined) && (app.config !== undefined) && (app.config.username !== undefined) ) { 
                 selectedUsername = app.config.username;
               } else {
                 selectedUsername = "";
               };
+              if ( (app !== undefined) && (app.config !== undefined) && (app.config.email !== undefined) ) { 
+                selectedEmail = app.config.email;
+              } else {
+                selectedEmail = "";
+              };
               signIn = '<div class="container-fluid">'+
                 '<div class="row-fluid">'+
                   '<form id="sign-up" class="offset3 span6">'+
                     '<h1>Sign In</h1>'+
                     '<div class="row-fluid">'+
+                      '<label for="username">Username</label>'+
                       '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Username" autofocus>'+
-                      '<select id="language" name="language" class="input-lg" required>'+
+                      '<label for="email">Email</label>'+
+                      '<input name="email" type="email" value="'+selectedEmail+'" class="span12 input-lg" placeholder="Email">'+
+                      '<select id="language" name="language" class="input-lg">'+
                         '<option value="english">English</option>'+
                         '<option value="spanish">Espa&ntilde;ol</option>'+
                       '</select>'+
@@ -299,6 +307,10 @@
                     break;
                   case "username":
                     app.config.username = inputElement['value'];
+                    break;
+                  case "email":
+                    debugger;
+                    app.config.email = inputElement['value'];
                     break;
                   };
                 });
