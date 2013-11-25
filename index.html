@@ -17,6 +17,8 @@
 
   <!--app JS-->
   <script src="js/app/app.js"></script>
+  <script src="js/app/cbits.js"></script>
+  <script src="js/app/md5.js"></script>
   <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
   <style>
@@ -277,23 +279,15 @@
                     '<div class="row-fluid">'+
                       '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Username" autofocus>'+
                       '<select id="language" name="language" class="input-lg" required>'+
-                        '<option value="" disabled>Select Language</option>'+
                         '<option value="english">English</option>'+
                         '<option value="spanish">Espa&ntilde;ol</option>'+
                       '</select>'+
-                      '<button id="submit" class="btn btn-large btn-info btn-block" type="submit" disabled="disabled">Sign in</button>'+
+                      '<button id="submit" class="btn btn-large btn-info btn-block" type="submit">Sign in</button>'+
                     '</div>'+
                   '</form>'+
                 '</div>'+
               '</div>';
               $('body').css('background-color','#f5f5f5').html(signIn);
-              $("form select[name='language']").on('change', function(){
-                if ( ($("select[name='language']").val() != null)) {
-                  $('button#submit').removeAttr('disabled')
-                } else {
-                  $('button#submit').attr('disabled', 'disabled')
-                }
-              });
               $('button#submit').click(event, function(event){
                 event.preventDefault();
                 var formArray = $("form#sign-up").serializeArray();

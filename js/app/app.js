@@ -1,6 +1,7 @@
 var app = {};
 app.config = {};
 app.config.mode = "demo"; //demo or normal or assessment
+app.inverventionId = "SPF-KTR";
 
 app.text = {};
 app.style = {};
@@ -22,7 +23,17 @@ app.status.currentChapterId = null;
 app.status.currentChapterElement = null;
 app.status.currentChapterContents = null;
 app.status.numPagesInCurrentChapter = null;
+app.status.currentChapter = function () {
+	if (app.status.currentChapterId != null) {
+		var chapter;
 
+		chapter = _.where(app.content, {
+			id: parseInt(app.status.currentChapterId)
+		})[0].pretty_name;
+		console.log(chapter);
+		return chapter;
+	}
+};
 app.start = function (appContents) {
 
 	var moduleName = "baseline", progressBarOptions = {
@@ -68,6 +79,7 @@ app.getChapterContents = function (chapter_id, appContents) {
 };
 
 app.build = {}
+app.build.stringOfClicks = "a.animation, a.audio, a.audioImage, a.definition, a.graph, a.image, a.slide-show, a.table, a.table-modal, a.video, label.radio input, .mainContainer a, .mainContainer .btn, .bottom a, .bottom .btn";
 app.build.form = {};
 app.build.modal = ''+
 	'<div id="confirmSkipping" class="modal">'+
@@ -186,6 +198,7 @@ app.build.navChapterBar = function (arrayOfChapters) {
 	$(".load-chapter").on("click", function (ev) {
 		app.actions.goToChapter(ev.currentTarget.dataset.id, app.contents)
 	})
+	app.actions.recordUserActions(".load-chapter a");
 };
 
 app.build.chapter = function (currentChapterId, appContents) {
@@ -195,14 +208,11 @@ app.build.chapter = function (currentChapterId, appContents) {
 	app.status.currentChapterContents = app.getChapterContents(currentChapterId, appContents);
 	app.status.numPagesInCurrentChapter = app.status.currentChapterContents.length;
 	app.status.currentPageIndex = 0;
+	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 	app.actions.setPage(app.status.currentChapterContents[app.status.currentPageIndex]);
 
 	$("li.load-chapter").removeClass("active");
 	$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
-
-	// $(".currentSlideCount").html("1 of " + app.status.numPagesInCurrentChapter);
-
-	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 
 	$(".mainContainer").show();
 
@@ -281,7 +291,7 @@ app.actions.loadPage = function(index, moduleName, questionsArray, options) {
 		$("#continue-button").on("click", function (ev) {
 			app.actions.loadPage(index + 1, moduleName, questionsArray, options);
 		});
-	}
+	};
 };
 
 app.actions.submitAnswer = function (index, moduleName, currentQuestion, questionsArray, options) {
@@ -358,7 +368,35 @@ app.actions.setPage = function (pageContents) {
 		ev.preventDefault();
 		app.actions.setSkinTone(ev.currentTarget.href);
 	})
+	app.actions.recordUserActions(app.build.stringOfClicks);
+};
 
+app.actions.recordUserActions = function(tagsList) {
+	$(tagsList).on('click', function(event) {
+		var userClick;
+		// debugger
+		userClick = {
+			user_id: app.config.username,
+			invervention_id: app.inverventionId,
+			intervention_language: app.config.language,
+			intervention_voice_over: app.config.voice_over,
+			readable_click_datetime: (""+new Date()),
+			click_datetime: new Date(),
+			chapter: app.status.currentChapter(),
+			section: app.status.currentState,
+			page: app.status.currentPageIndex + 1,
+			href: $(this).attr("href"),
+			contents: $(this).html(),
+			tagClass: $(this).attr("class"),
+			tagId: $(this).attr("id"),
+			tagName: $(this).get(0).tagName
+		};
+
+		console.log("userClick", userClick)
+
+		postToPRImporter(prwAddrHostAndPortHttps, app.inverventionId, "userClicks", userClick);
+
+	});
 };
 
 app.actions.changePage = function (index_of_page) {
@@ -373,7 +411,6 @@ app.actions.changePage = function (index_of_page) {
 	app.actions.setPage(app.status.currentChapterContents[app.status.currentPageIndex]);
 	app.build.loadSkinColorHighChart();
 	app.build.displayChoosenSkinType();
-
 };
 
 app.actions.goToChapter = function (chapterId, appContents) {
