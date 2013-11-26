@@ -402,11 +402,13 @@ app.actions.setPage = function (pageContents) {
 				var email = $emailInput.val();
 
 				app.config.email = email;
+				app.config.handout = false;
 			});
 			$(".btn-group button#email-handout").on("click", function(event) {
 				var $emailContainer = $("form#email-container");
 
 				if (!($emailContainer.length === 0)) { $emailContainer.remove(); };
+				app.config.handout = true;
 			});
 		};
 	});
