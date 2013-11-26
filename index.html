@@ -265,17 +265,12 @@
             },
 
             signIn: function() {
-              var signIn, selectedUsername, selectedEmail;
+              var signIn, selectedUsername;
 
               if ( (app !== undefined) && (app.config !== undefined) && (app.config.username !== undefined) ) { 
                 selectedUsername = app.config.username;
               } else {
                 selectedUsername = "";
-              };
-              if ( (app !== undefined) && (app.config !== undefined) && (app.config.email !== undefined) ) { 
-                selectedEmail = app.config.email;
-              } else {
-                selectedEmail = "";
               };
               signIn = '<div class="container-fluid">'+
                 '<div class="row-fluid">'+
@@ -284,8 +279,6 @@
                     '<div class="row-fluid">'+
                       '<label for="username">Username / Nombre de usuario</label>'+
                       '<input name="username" type="text" value="'+selectedUsername+'" class="span12 input-lg" placeholder="Your username / Su nombre de usuario" autofocus>'+
-                      '<label for="email">Email</label>'+
-                      '<input name="email" type="email" value="'+selectedEmail+'" class="span12 input-lg" placeholder="Your email / Su correo electrónico">'+
                       '<select id="language" name="language" class="input-lg">'+
                         '<option value="english">English</option>'+
                         '<option value="spanish">Espa&ntilde;ol</option>'+
@@ -307,9 +300,6 @@
                     break;
                   case "username":
                     app.config.username = inputElement['value'];
-                    break;
-                  case "email":
-                    app.config.email = inputElement['value'];
                     break;
                   };
                 });

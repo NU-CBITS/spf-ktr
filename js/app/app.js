@@ -300,7 +300,6 @@ app.actions.loadPage = function(index, moduleName, questionsArray, options) {
 		$("#save-button").on("click", function (ev) {
 			app.actions.submitAnswer(index, moduleName, currentQuestion, questionsArray, options);
 		});
-
 		$("#continue-button").on("click", function (ev) {
 			app.actions.loadPage(index + 1, moduleName, questionsArray, options);
 		});
@@ -380,7 +379,37 @@ app.actions.setPage = function (pageContents) {
 	$(".skin-colors button").on("click", function (ev) {
 		ev.preventDefault();
 		app.actions.setSkinTone(ev.currentTarget.href);
-	})
+	});
+	$(".btn-group button#email-score").on("click", function(event) {
+		var target = event.target,
+			$btnGroup = $(target).parent('.btn-group'),
+			$emailContainer = $("form#email-container");
+
+		if ($emailContainer.length === 0) {
+			var email = app.config.email || "";
+
+			$btnGroup.after(''+
+				'<form id="email-container">'+
+					'<fieldset>'+
+						'<label for="email">Email</label>'+
+						'<input name="email" type="email" value="'+email+'" class="span12 input-lg">'+
+					'</fieldset>'+
+				'</form>');
+
+			var $emailInput = $("form#email-container input");
+
+			$emailInput.on('change', function(){
+				var email = $emailInput.val();
+
+				app.config.email = email;
+			});
+			$(".btn-group button#email-handout").on("click", function(event) {
+				var $emailContainer = $("form#email-container");
+
+				if (!($emailContainer.length === 0)) { $emailContainer.remove(); };
+			});
+		};
+	});
 	app.actions.recordUserActions(app.build.stringOfClicks);
 };
 
@@ -548,19 +577,19 @@ app.actions.createSentence = function(array) {
 };
 
 app.actions.completed = function() {
-	var checklistArray, exposureChecklistArray, rememberCheckListArray;
+	var checklistArray, exposureChecklistArray, rememberCheckListArray, skinColor = app.skinColor || "not available";
 
 	app["sun-exposure-checklist-form-1"] = app["sun-exposure-checklist-form-1"] || [];
 	app["sun-exposure-checklist-form-2"] = app["sun-exposure-checklist-form-2"] || [];
 	app["remember-checklist"] = app["remember-checklist"] || [];
 
 	exposureChecklistArray = app["sun-exposure-checklist-form-1"].concat(app["sun-exposure-checklist-form-2"]);
-	exposureChecklist = app.actions.createSentence(exposureChecklistArray);
+	exposureChecklist = app.actions.createSentence(exposureChecklistArray) || "";
 
-	rememberChecklist = app.actions.createSentence(app["remember-checklist"]);
+	rememberChecklist = app.actions.createSentence(app["remember-checklist"]) || "none.";
 
 	return '<p class="lead">I hope that you have learned that it is important to use sun protection and ways to protect yourself. You asked me to send you this as a reminder to use sun protection.</p>'+
-	'<p class="lead">Your skin tone number is '+app.skinColor+'. (risks page 4)</p>'+
+	'<p class="lead">Your skin tone number is '+skinColor+'. (risks page 4)</p>'+
 	'<p class="lead">This means that when you are planning on being outdoors '+exposureChecklist+', it is important for you to remember to apply a sunscreen with an SPF of 50 or more about 20 minutes before you go out. Some of the reminders that you thought would work for you are: (score page 3) '+rememberChecklist+'</p>'+
 	'<p class="lead">Using sunscreen will keep you from getting skin cancer. Congratulations on your decision to keeping your skin healthy.</p>'+
 	'<p><img src="./js/vendor/images/june_k_robinson_signature.png" alt="June K Robinson, MD" height="100" width="400"></p>'+
