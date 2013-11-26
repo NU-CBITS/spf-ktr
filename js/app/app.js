@@ -616,13 +616,13 @@ app.actions.loadSummary = function() {
 		'</div>'+
 		'<div class="modal-body" style="max-height: 600px;">'+page+'</div>'+
 		'<div class="modal-footer">'+
-			'<a href="#" onClick="$(\'#email-modal\').modal(\'hide\');$(\'#email-modal\').remove();app.emailSent = true;return false;" class="btn btn-large">Close</a>'+
+			'<a href="#" onClick="$(\'#email-modal\').modal(\'hide\');$(\'#email-modal\').remove();return false;" class="btn btn-large">Close</a>'+
 		'</div>'+
 	'</div>';
 	$(".mainContainer").append(modal);
 	$('#email-modal.modal').modal('show')
 
-	// sending email
+	// send email
 	data = {
 		"from" : "informme@cbits.northwestern.edu",
 		"to" : app.config.email,
@@ -633,7 +633,8 @@ app.actions.loadSummary = function() {
 		"mime" : "html",
 		"saveAsPDFAndLink": true
 	};
-	if (!app.emailSent) {
+	if (app.config.email && !app.emailSent) {
+		app.emailSent = true;
 		app.actions.sendEmail(data);
 	};
 };
