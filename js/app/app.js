@@ -35,20 +35,17 @@ app.status.currentChapter = function () {
 	}
 };
 app.start = function (appContents) {
-
 	var moduleName = "baseline", progressBarOptions = {
 		hideBackButton: true,
 		hideNextButton: true,
 		hidePagination: true
 	};
 
+	app.status.currentChapterId = 0;
 	app.content = appContents.nav_elements;
 	// app.questions = appContents.questions; // This is commented out so we skip the baseline/diagnostic
 	app.actions.loadPage(0, moduleName, _.where(app.questions, { use: moduleName }), progressBarOptions);
-
-	if (app.config.mode == "demo") {
-		app.build.navChapterBar(app.arrayOfChapterIds(app.content));
-	};
+	app.build.navChapterBar(app.arrayOfChapterIds(app.content));
 };
 
 app.arrayOfChapterIds = function (appContents) {
@@ -138,8 +135,7 @@ app.build.questionForm = function(question) {
 		break;
 	default:
 		form = app.build.form.defaultForm(question);
-		form += continueButton
-		break;
+		form += continueButton;
 	};
 	return form;
 };
@@ -195,13 +191,38 @@ app.build.navChapterBar = function (arrayOfChapters) {
 	});
 
 	$(".load-chapter").on("click", function (ev) {
+		if (ev.currentTarget.dataset.id === "978") {
+			ev.currentTarget.dataset.id = 977 // to fix build.chapter bug
+		};
 		app.actions.goToChapter(ev.currentTarget.dataset.id, app.contents)
 	})
 	app.actions.recordUserActions(".load-chapter a");
 };
 
 app.build.chapter = function (currentChapterId, appContents) {
-
+	$("li.load-chapter").removeClass("active");
+	console.log("Building Chapter", currentChapterId);
+	debugger
+	// to fix ording of chapters...ARG!
+	switch(currentChapterId) {
+	case 0: // coverpage - set on app.start()
+		currentChapterId = 977;
+		$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
+		break;
+	case 978: // from coverpage to table of contents
+		currentChapterId = 976;
+		$("li.load-chapter[data-id='976']").addClass("active");
+		break;
+	case 977:
+		currentChapterId = 978; // in order to highlight 'Traing' bc of order bug
+		$("li.load-chapter[data-id='978']").addClass("active");
+		$("li.load-chapter[data-id='977']").addClass("active");
+		break;
+	default:
+		currentChapterId = currentChapterId;
+		$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
+	};
+	app.status.currentChapterId = currentChapterId;
 	console.log("Building Chapter", currentChapterId);
 	app.status.currentChapterElement = _.where(appContents, { id: currentChapterId })[0];
 	app.status.currentChapterContents = app.getChapterContents(currentChapterId, appContents);
@@ -210,11 +231,7 @@ app.build.chapter = function (currentChapterId, appContents) {
 	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 	app.actions.setPage(app.status.currentChapterContents[app.status.currentPageIndex]);
 
-	$("li.load-chapter").removeClass("active");
-	$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
-
 	$(".mainContainer").show();
-
 };
 
 app.build.chapterProgressBar = function (position, total, options) {
@@ -287,23 +304,22 @@ app.actions.loadPage = function(index, moduleName, questionsArray, options) {
 	index = index || 0;
 	app.current_question = currentQuestion = questionsArray[index];
 
-	if (questionsArray[index] == undefined) {
-		app.status.currentChapterId = 976;
+	// if (questionsArray[index] == undefined) {
 		app.build.chapter(app.status.currentChapterId, app.content);
-	} else {
-		$(".mainContainer").html(app.templates.fullPage);
-		questionForm = app.build.questionForm(questionsArray[index]);
-		$(".mainContent").html(questionForm);
-		$(".mainContainer").show();
+	// } else {
+	// 	$(".mainContainer").html(app.templates.fullPage);
+	// 	questionForm = app.build.questionForm(questionsArray[index]);
+	// 	$(".mainContent").html(questionForm);
+	// 	$(".mainContainer").show();
 
-		app.build.chapterProgressBar(index + 1, questionsArray.length, options);
-		$("#save-button").on("click", function (ev) {
-			app.actions.submitAnswer(index, moduleName, currentQuestion, questionsArray, options);
-		});
-		$("#continue-button").on("click", function (ev) {
-			app.actions.loadPage(index + 1, moduleName, questionsArray, options);
-		});
-	};
+	// 	app.build.chapterProgressBar(index + 1, questionsArray.length, options);
+	// 	$("#save-button").on("click", function (ev) {
+	// 		app.actions.submitAnswer(index, moduleName, currentQuestion, questionsArray, options);
+	// 	});
+	// 	$("#continue-button").on("click", function (ev) {
+	// 		app.actions.loadPage(index + 1, moduleName, questionsArray, options);
+	// 	});
+	// };
 };
 
 app.actions.submitAnswer = function (index, moduleName, currentQuestion, questionsArray, options) {

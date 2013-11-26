@@ -261,7 +261,7 @@
             routes: {
               "": "signIn",
               "narrator/:id": "narrator",
-              "diagnostic": "diagnostic"
+              "cover_page": "cover_page"
             },
 
             signIn: function() {
@@ -307,7 +307,7 @@
               });
             },
 
-            diagnostic: function() {
+            cover_page: function() {
               var template = ''+
                 '<div class="navbar navbar-static-top">'+
                   '<div class="navbar-inner">'+
@@ -395,7 +395,7 @@
                         } else {
                           return "Regresar" 
                         }
-                      }()+'</a><a href="#diagnostic" id="continue" class="btn btn-large btn-info pull-right" disabled>'+function(){
+                      }()+'</a><a href="#cover_page" id="continue" class="btn btn-large btn-info pull-right" disabled>'+function(){
                         if (app.config.language == "english") {
                           return "Continue" 
                         } else {
