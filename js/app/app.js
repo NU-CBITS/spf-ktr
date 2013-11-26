@@ -202,7 +202,6 @@ app.build.navChapterBar = function (arrayOfChapters) {
 app.build.chapter = function (currentChapterId, appContents) {
 	$("li.load-chapter").removeClass("active");
 	console.log("Building Chapter", currentChapterId);
-	debugger
 	// to fix ording of chapters...ARG!
 	switch(currentChapterId) {
 	case 0: // coverpage - set on app.start()
