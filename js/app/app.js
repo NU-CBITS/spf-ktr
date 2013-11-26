@@ -705,7 +705,7 @@ app.build.goOnButton = function (options) {
 	});
 
 	$("button.pageBack").on("click", function (ev) {
-		app.actions.changePage(app.status.currentPageIndex - 1)
+		app.actions.changePage(app.status.currentPageIndex)
 	});
 
 	if (options.hideNextButton) {
