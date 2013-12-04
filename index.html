@@ -345,7 +345,7 @@
             },
 
             narrator: function(language) {
-              var header, listItemThumbnails = '', offset = '', selectText, templage, thumbnailClass = "span3", thumbnails;
+              var header, listItemThumbnails = '', offset = '', selectText, templage, thumbnailClass = "span4", thumbnails;
 
               if (language == "english") {
                 header = "Sun Protection Strategies for Kidney Transplant Recipient";
@@ -361,7 +361,7 @@
                 thumbnails = [ { href: 'narrator4.jpg', name:'Francisco'} ];
               };
               _.each(thumbnails, function(element, index, list) {
-                if (list.length == 1) { thumbnailClass = 'span4'; offset += 'offset3' };
+                if (list.length == 1) { thumbnailClass = 'span5'; offset += 'offset3' };
                 listItemThumbnails +=
                 '<li class="'+ thumbnailClass+' '+offset+'">'+
                   '<div class="thumbnail">'+
