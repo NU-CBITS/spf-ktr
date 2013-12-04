@@ -274,7 +274,7 @@ app.actions.setLanguage = function(language) {
 	if (language == "english") {
 		app.text.goBack = "BACK"
 		app.text.nextText = "NEXT";
-		app.text.goOn = "GO ON";
+		app.text.goOn = "Continue";
 		app.style.loadChapterStyle = "font-size:1.2em;";
 	} else {
 		app.text.goBack = "Regresar"
@@ -285,6 +285,7 @@ app.actions.setLanguage = function(language) {
 };
 
 app.actions.sendEmail = function(data){
+	debugger;
 	$.ajax({
 	  type: "POST",
 	  url: "http://mohrlab.northwestern.edu/utility/sendmail.cfm",
@@ -651,6 +652,7 @@ app.actions.loadSummary = function() {
 		"saveAsPDFAndLink": true
 	};
 	if (app.config.email && !app.emailSent) {
+		debugger
 		app.emailSent = true;
 		app.actions.sendEmail(data);
 	};
