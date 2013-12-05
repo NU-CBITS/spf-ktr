@@ -285,6 +285,7 @@ app.actions.setLanguage = function(language) {
 };
 
 app.actions.sendEmail = function(data){
+	console.log('sending data', data);
 	$.ajax({
 	  type: "POST",
 	  url: "http://mohrlab.northwestern.edu/utility/sendmail.cfm",
@@ -639,12 +640,14 @@ app.actions.completed = function() {
 };
 
 app.actions.loadSummary = function() {
-	var modal, page = app.actions.completed(), results;
+	var modal, page = app.actions.completed(), bcc, results;
 
 	if (app.config.language == "spanish") {
 		results = "¡Felicidades!";
+		bcc = "j-duffecy@northwestern.edu, protecionsolar@northwestern.edu";
 	} else {
 		results = "Congratulations!";
+		bcc = "j-duffecy@northwestern.edu, sunprotection@northwestern.edu";
 	};
 
 	// modal
@@ -666,7 +669,7 @@ app.actions.loadSummary = function() {
 	data = {
 		"from" : "informme@cbits.northwestern.edu",
 		"to" : app.config.email,
-		"bcc" : "j-duffecy@northwestern.edu",
+		"bcc" : bcc,
 		"subject" : app.inverventionId+" Summary of Results",
 		"contents" : page,
 		// "additional_contents": additional_contents,
