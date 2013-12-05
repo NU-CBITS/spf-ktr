@@ -584,7 +584,11 @@ app.actions.createSentence = function(array) {
 			sentence = sentence + value;
 			break;
 		case (list.length - 1):
-			sentence = sentence + ", and " + value;
+			if (app.config.language == "spanish") {
+				sentence = sentence + ", y " + value;
+			else {
+				sentence = sentence + ", and " + value;
+			}
 			break;
 		default:
 			sentence = sentence + ", " + value;
@@ -614,9 +618,9 @@ app.actions.completed = function() {
 
 	if (app.config.language == "spanish") {
 		page = ''+
-			'<p class="lead">Estimado(a) '+app.config.username.capitalize()+'</p>'+
+			'<p class="lead">'+app.config.username.capitalize()+'</p>'+
 			'<p class="lead">Yo espero que usted haya aprendido que es importante usar protección solar y los diferentes maneras de como protegerse. Usted me pidió que le enviara este mensaje como un recordatorio de que  usted debe de usar protección solar. </p>'+
-			'<p class="lead">El número de tono de su piel es'+skinColor+'.</p>'+
+			'<p class="lead">El número de tono de su piel es '+skinColor+'.</p>'+
 			'<p class="lead">Esto significa que cuando usted planea estar al aire libre '+exposureChecklist+', es importante que usted recuerde aplicar bloqueador solar con un factor de protección (SPF) de 50 o más 20 minutos antes de salir afuera. Algunos recordatorios que serán útiles para usted son: '+rememberChecklist+'.</p>'+
 			'<p class="lead">El uso de bloqueador solar protege a usted de desarrollar cáncer de piel. Felicidades por su decisión de mantener su piel sana.</p>'+
 			'<p><img src="./js/vendor/images/june_k_robinson_signature.png" alt="June K Robinson, MD" height="100" width="400"></p>'+
@@ -625,7 +629,7 @@ app.actions.completed = function() {
 			'<p>Departamento de Dermatología</p>';
 	} else {
 		page = ''+
-			'<p class="lead">Dear '+app.config.username.capitalize()+'</p>'+
+			'<p class="lead">'+app.config.username.capitalize()+'</p>'+
 			'<p class="lead">I hope that you have learned that it is important to use sun protection and ways to protect yourself. You asked me to send you this as a reminder to use sun protection.</p>'+
 			'<p class="lead">Your skin tone number is '+skinColor+'.</p>'+
 			'<p class="lead">This means that when you are planning on being outdoors '+exposureChecklist+', it is important for you to remember to apply a sunscreen with an SPF of 50 or more about 20 minutes before you go out. Some of the reminders that you thought would work for you are: '+rememberChecklist+'.</p>'+
