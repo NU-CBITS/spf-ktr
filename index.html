@@ -268,7 +268,7 @@
             routes: {
               "": "signIn",
               "narrator/:id": "narrator",
-              "cover_page": "cover_page"
+              "training_page": "training_page"
             },
 
             signIn: function() {
@@ -314,7 +314,7 @@
               });
             },
 
-            cover_page: function() {
+            training_page: function() {
               var template = ''+
                 '<div class="navbar navbar-static-top">'+
                   '<div class="navbar-inner">'+
@@ -409,7 +409,7 @@
                       '</div>'+
                       '<div class="span8"></div>'+
                       '<div class="span2">'+
-                        '<a href="#cover_page" id="continue" class="btn btn-large btn-info" disabled>'+function(){
+                        '<a href="#training_page" id="continue" class="btn btn-large btn-info">'+function(){
                             if (app.config.language == "english") {
                               return "Continue" 
                             } else {
@@ -423,8 +423,7 @@
               $('body').css('background-color','transparent').html(template);  
               $(".caption button").on('click', function(event){
                 var target = $(event.target)
-                app.config.voice_over = target.val();
-                $('a#continue').removeAttr('disabled')
+                app.config.voice_over = target.val()
               })
             }
           });

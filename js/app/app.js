@@ -12,6 +12,13 @@ app.config.mainContent.showTitle = false;
 app.config.assessments = {};
 app.config.assessments.exist = false;
 
+if (app.config.language == "spanish") {
+	app.config.voice_over = app.config.voice_over || "francisco"
+} else {
+	app.config.voice_over = app.config.voice_over || "sheano"
+};
+
+
 app.images_url = "images/";
 app.videos_url = "videos/";
 app.audio_url = "audio/";
@@ -181,19 +188,17 @@ app.build.form.defaultForm = function (question) {
 };
 
 app.build.navChapterBar = function (arrayOfChapters) {
-	var coverPageEnglish = _.where(arrayOfChapters, { id: 977 })[0];
-	var coverPageSpanish = _.where(arrayOfChapters, { id: 980 })[0];
+	var coverPage = _.where(arrayOfChapters, { id: 977 })[0];
+	var trainingPage = _.where(arrayOfChapters, { id: 978 })[0];
+	// var coverPageSpanish = _.where(arrayOfChapters, { id: 980 })[0];
 
-	arrayOfChapters = _.without(arrayOfChapters, coverPageEnglish, coverPageSpanish);
+	arrayOfChapters = _.without(arrayOfChapters, coverPage, trainingPage);
 
 	_.each(arrayOfChapters, function (i) {
 		$("#main_nav").append('<li class="load-chapter" data-id="' + i.id + '"><a href="#' + i.pretty_name + '" style="'+app.style.loadChapterStyle+'">' + i.pretty_name + '</a></li>');
 	});
 
 	$(".load-chapter").on("click", function (ev) {
-		if (ev.currentTarget.dataset.id === "978") {
-			ev.currentTarget.dataset.id = 977 // to fix build.chapter bug
-		};
 		app.actions.goToChapter(ev.currentTarget.dataset.id, app.contents)
 	})
 	app.actions.recordUserActions(".load-chapter a");
@@ -202,23 +207,11 @@ app.build.navChapterBar = function (arrayOfChapters) {
 app.build.chapter = function (currentChapterId, appContents) {
 	$("li.load-chapter").removeClass("active");
 	console.log("Building Chapter", currentChapterId);
-	// to fix ording of chapters...ARG!
-	switch(currentChapterId) {
-	case 0: // coverpage - set on app.start()
-		currentChapterId = 977;
+
+	if (currentChapterId == 0) {
+		currentChapterId = 978;
 		$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
-		break;
-	case 978: // from coverpage to table of contents
-		currentChapterId = 976;
-		$("li.load-chapter[data-id='976']").addClass("active");
-		break;
-	case 977:
-		currentChapterId = 978; // in order to highlight 'Traing' bc of order bug
-		$("li.load-chapter[data-id='978']").addClass("active");
-		$("li.load-chapter[data-id='977']").addClass("active");
-		break;
-	default:
-		currentChapterId = currentChapterId;
+	} else {
 		$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
 	};
 	app.status.currentChapterId = currentChapterId;
