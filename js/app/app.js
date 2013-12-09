@@ -13,15 +13,17 @@ app.config.assessments = {};
 app.config.assessments.exist = false;
 
 if (app.config.language == "spanish") {
-	app.config.voice_over = app.config.voice_over || "francisco"
+	app.config.voice_over = app.config.voice_over || "francisco";
+	app.media_folder = "spanish/";
 } else {
-	app.config.voice_over = app.config.voice_over || "sheano"
+	app.config.voice_over = app.config.voice_over || "sheano";
+	app.media_folder = "english/"
 };
 
 
-app.images_url = "images/";
-app.videos_url = "videos/";
-app.audio_url = "audio/";
+app.images_url = app.media_folder+"images/";
+app.videos_url = app.media_folder+"videos/";
+app.audio_url = app.media_folder+"audio/";
 
 app.status = {};
 app.status.currentState = null; //lesson, post_lesson, assessment1, assessment2, summary1, summary2 
