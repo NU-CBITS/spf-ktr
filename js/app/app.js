@@ -480,6 +480,12 @@ app.actions.changePage = function (index_of_page) {
 	app.actions.setPage(app.status.currentChapterContents[app.status.currentPageIndex]);
 	app.build.loadSkinColorHighChart();
 	app.build.displayChoosenSkinType();
+
+	if ((app.status.currentChapterId == 687) && (app.status.currentPageIndex == 4)) {
+		// send email
+		app.actions.sendSummary();
+	};
+
 };
 
 app.actions.goToChapter = function (chapterId, appContents) {
@@ -611,6 +617,13 @@ app.actions.completed = function() {
 
 	rememberChecklist = app.actions.createSentence(app["remember-checklist"]) || "none.";
 
+	// on Congratuations page!
+	$("span#skinColor").html(skinColor);
+	$("span#exposureChecklist").html(exposureChecklist);
+	$("span#rememberChecklist").html(rememberChecklist);
+
+
+	// The FOLLOWING will be sent in an email!
 	if (app.config.language == "spanish") {
 		page = ''+
 			'<p class="lead">Yo espero que usted haya aprendido que es importante usar protección solar y los diferentes maneras de como protegerse. Usted me pidió que le enviara este mensaje como un recordatorio de que  usted debe de usar protección solar. </p>'+
@@ -636,8 +649,14 @@ app.actions.completed = function() {
 	return page;
 };
 
-app.actions.loadSummary = function() {
-	var modal, page = app.actions.completed(), bcc, results;
+// THIS IS FOR YOU MARK! :-)
+app.actions.loadSummary = function () {
+	app.build.chapter(687, app.content);
+	app.actions.setPage(app.status.currentChapterContents[4]);
+};
+
+app.actions.sendSummary = function() {
+	var page = app.actions.completed(), bcc, results;
 
 	if (app.config.language == "spanish") {
 		results = "¡Felicidades!";
@@ -646,21 +665,6 @@ app.actions.loadSummary = function() {
 		results = "Congratulations!";
 		bcc = "j-duffecy@northwestern.edu, sunprotection@northwestern.edu";
 	};
-
-	// modal
-	modal = ''+
-	'<div id="email-modal" class="modal hide fade" style="width: 90%;left: 29%;">'+
-		'<div class="modal-header">'+
-			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
-			'<h3>'+results+'</h3>'+
-		'</div>'+
-		'<div class="modal-body" style="max-height: 600px;">'+page+'</div>'+
-		'<div class="modal-footer">'+
-			'<a href="#" onClick="$(\'#email-modal\').modal(\'hide\');$(\'#email-modal\').remove();return false;" class="btn btn-large">Close</a>'+
-		'</div>'+
-	'</div>';
-	$(".mainContainer").append(modal);
-	$('#email-modal.modal').modal('show')
 
 	// send email
 	data = {
@@ -673,6 +677,7 @@ app.actions.loadSummary = function() {
 		"mime" : "html",
 		"saveAsPDFAndLink": true
 	};
+
 	if (app.config.email && !app.emailSent) {
 		app.emailSent = true;
 		app.actions.sendEmail(data);
@@ -735,11 +740,13 @@ app.build.goOnButton = function (options) {
 
 		currentChapterIndex = _.indexOf(app.arrayOfChapterIds(appContent.nav_elements), app.status.currentChapterElement)
 		nextChapter = app.arrayOfChapterIds(appContent.nav_elements)[currentChapterIndex + 1]
+
 		if (nextChapter !== undefined) {
 			app.build.chapter(nextChapter.id, app.content);
 		} else {
-			app.actions.loadSummary();
+			// app.actions.loadSummary();
 		};
+
 	});
 
 	$("button.pageBack").on("click", function (ev) {
@@ -750,6 +757,10 @@ app.build.goOnButton = function (options) {
 		$("button.pageNext").hide();    
 	} else {
 		$("button.pageNext").show();
+	};
+
+	if ((app.status.currentChapterId == 687) && (app.status.currentPageIndex == 5)) {
+		$("button.pageNext").hide();    
 	};
 
 };

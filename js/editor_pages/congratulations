@@ -1,0 +1,10 @@
+<h1>&iexcl;Felicidades!</h1>
+<p class="lead">Yo espero que usted haya aprendido que es importante usar protecci&oacute;n solar y los diferentes maneras de como protegerse. Usted me pidi&oacute; que le enviara este mensaje como un recordatorio de que usted debe de usar protecci&oacute;n solar.</p>
+<p class="lead">El n&uacute;mero de tono de su piel es <span id="skinColor"></span>.</p>
+<p class="lead">Esto significa que cuando usted planea estar al aire libre <span id="exposureChecklist"></span>, es importante que usted recuerde aplicar bloqueador solar con un factor de protecci&oacute;n (SPF) de 50 o m&aacute;s 20 minutos antes de salir afuera. Algunos recordatorios que ser&aacute;n &uacute;tiles para usted son: <span id="rememberChecklist"></span></p>
+<p class="lead">El uso de bloqueador solar protege a usted de desarrollar c&aacute;ncer de piel. Felicidades por su decisi&oacute;n de mantener su piel sana.</p>
+<p>
+	<img alt="June K Robinson, MD" height="100" src="./js/vendor/images/june_k_robinson_signature.png" width="400" /></p>
+<p>June K. Robinson, MD</p>
+<p>Northwestern University Feinberg School of Medicine</p>
+<p>Departamento de Dermatolog&iacute;a</p>
