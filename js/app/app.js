@@ -615,7 +615,7 @@ app.actions.completed = function() {
 	exposureChecklistArray = app["sun-exposure-checklist-form-1"].concat(app["sun-exposure-checklist-form-2"]);
 	exposureChecklist = app.actions.createSentence(exposureChecklistArray) || "";
 
-	rememberChecklist = app.actions.createSentence(app["remember-checklist"]) || "none.";
+	rememberChecklist = app.actions.createSentence(app["remember-checklist"]) || "none";
 
 	// on Congratuations page!
 	$("span#skinColor").html(skinColor);
