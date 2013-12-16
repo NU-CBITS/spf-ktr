@@ -471,10 +471,38 @@ app.actions.recordUserActions = function(tagsList) {
 app.actions.changePage = function (index_of_page) {
 
 	console.log("Page changed to ", index_of_page + 1, "of", app.status.numPagesInCurrentChapter);
-
 	// $(".currentSlideCount").html(index_of_page + 1 + " of " + app.status.numPagesInCurrentChapter);
-
 	app.status.currentPageIndex = index_of_page;
+
+	if ((app.status.currentChapterId == 687) && (app.status.currentPageIndex == 4)) {
+		var page = app.actions.completed();
+
+		var modal = app.build.modal = ''+
+			'<div class="modal summary-modal">'+
+				'<div class="modal-header">'+
+					'<h1>'+
+						function(){
+							if (app.config.language == "spanish") {
+								return '¡Felicidades!'
+							} else {
+								return 'Congratulations!'
+							};
+						}()+
+					'</h1>'+
+				'</div>'+
+				'<div class="modal-body">'+page+'</div>'+
+				'<div class="modal-footer">'+
+          '<button class="remove-congratulations-modal pageBack btn btn-large pull-left"></button>'+
+          '<button class="remove-congratulations-modal pageNext btn btn-large pull-right" autofocus></button>'+
+				'</div>'+
+			'</div>'
+
+		$(".summary-modal").modal('hide');
+		$(".summary-modal").remove();
+		$('body').append(modal).find('.summary-modal').modal('show');
+		// send email
+		app.actions.sendSummary();
+	};
 
 	app.build.chapterProgressBar(app.status.currentPageIndex + 1, app.status.numPagesInCurrentChapter);
 	app.actions.setPage(app.status.currentChapterContents[app.status.currentPageIndex]);
@@ -482,9 +510,13 @@ app.actions.changePage = function (index_of_page) {
 	app.build.displayChoosenSkinType();
 
 	if ((app.status.currentChapterId == 687) && (app.status.currentPageIndex == 4)) {
-		// send email
-		app.actions.sendSummary();
+		$(".mainContent").empty();
 	};
+
+	$("button.remove-congratulations-modal").on('click', function(){
+		$(".summary-modal").modal('hide');
+		$(".summary-modal").remove();
+	})
 
 };
 
@@ -626,20 +658,20 @@ app.actions.completed = function() {
 	// The FOLLOWING will be sent in an email!
 	if (app.config.language == "spanish") {
 		page = ''+
-			'<p class="lead">Yo espero que usted haya aprendido que es importante usar protección solar y los diferentes maneras de como protegerse. Usted me pidió que le enviara este mensaje como un recordatorio de que  usted debe de usar protección solar. </p>'+
-			'<p class="lead">El número de tono de su piel es '+skinColor+'.</p>'+
-			'<p class="lead">Esto significa que cuando usted planea estar al aire libre '+exposureChecklist+', es importante que usted recuerde aplicar bloqueador solar con un factor de protección (SPF) de 50 o más 20 minutos antes de salir afuera. Algunos recordatorios que serán útiles para usted son: '+rememberChecklist+'.</p>'+
-			'<p class="lead">El uso de bloqueador solar protege a usted de desarrollar cáncer de piel. Felicidades por su decisión de mantener su piel sana.</p>'+
+			'<p>Yo espero que usted haya aprendido que es importante usar protección solar y los diferentes maneras de como protegerse. Usted me pidió que le enviara este mensaje como un recordatorio de que  usted debe de usar protección solar. </p>'+
+			'<p>El número de tono de su piel es '+skinColor+'.</p>'+
+			'<p>Esto significa que cuando usted planea estar al aire libre '+exposureChecklist+', es importante que usted recuerde aplicar bloqueador solar con un factor de protección (SPF) de 50 o más 20 minutos antes de salir afuera. Algunos recordatorios que serán útiles para usted son: '+rememberChecklist+'.</p>'+
+			'<p>El uso de bloqueador solar protege a usted de desarrollar cáncer de piel. Felicidades por su decisión de mantener su piel sana.</p>'+
 			'<p><img src="./js/vendor/images/june_k_robinson_signature.png" alt="June K Robinson, MD" height="100" width="400"></p>'+
 			'<p>June K. Robinson, MD</p>'+
 			'<p>Northwestern University Feinberg School of Medicine</p>'+
 			'<p>Departamento de Dermatología</p>';
 	} else {
 		page = ''+
-			'<p class="lead">I hope that you have learned that it is important to use sun protection and ways to protect yourself. You asked me to send you this as a reminder to use sun protection.</p>'+
-			'<p class="lead">Your skin tone number is '+skinColor+'.</p>'+
-			'<p class="lead">This means that when you are planning on being outdoors '+exposureChecklist+', it is important for you to remember to apply a sunscreen with an SPF of 50 or more about 20 minutes before you go out. Some of the reminders that you thought would work for you are: '+rememberChecklist+'.</p>'+
-			'<p class="lead">Using sunscreen will keep you from getting skin cancer. Congratulations on your decision to keeping your skin healthy.</p>'+
+			'<p>I hope that you have learned that it is important to use sun protection and ways to protect yourself. You asked me to send you this as a reminder to use sun protection.</p>'+
+			'<p>Your skin tone number is '+skinColor+'.</p>'+
+			'<p>This means that when you are planning on being outdoors '+exposureChecklist+', it is important for you to remember to apply a sunscreen with an SPF of 50 or more about 20 minutes before you go out. Some of the reminders that you thought would work for you are: '+rememberChecklist+'.</p>'+
+			'<p>Using sunscreen will keep you from getting skin cancer. Congratulations on your decision to keeping your skin healthy.</p>'+
 			'<p><img src="./js/vendor/images/june_k_robinson_signature.png" alt="June K Robinson, MD" height="100" width="400"></p>'+
 			'<p>June K. Robinson, MD</p>'+
 			'<p>Northwestern University Feinberg School of Medicine</p>'+
