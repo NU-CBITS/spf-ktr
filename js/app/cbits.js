@@ -1,5 +1,5 @@
-// var prJsonSubmitUrl = "http://10.101.117.92:12345/json/submit";	// http://10.101.117.92:12345/test.html
-var prwAddrHostAndPortHttps = "https://app2.cbits.northwestern.edu"; // https://ejs.cbits.northwestern.edu:8094 OR https://165.124.171.88 OR https://165.124.171.34:8094
+// var prJsonSubmitUrl = "http://10.101.117.92:12345/json/submit";  // http://10.101.117.92:12345/test.html
+var prwAddrHostAndPortHttps = "http://app2.cbits.northwestern.edu"; // https://ejs.cbits.northwestern.edu:8094 OR https://165.124.171.88 OR https://165.124.171.34:8094
 var triggerIdCommonPrefix = 'CopingCard: ';
 
 /**
@@ -68,6 +68,7 @@ var postArrayToPRImporter = function (protoHostAndPortUrlBase, userId, tableName
 var postToPRImporter = function(protoHostAndPortUrlBase, userId, tableName, postData, cbFn, cbData) {
   var postUrl = protoHostAndPortUrlBase + '/prImporter';
 
+  console.log("Preparing to transmit", postData);
   // generate the PR Importer message to be posted
   var userIdHash = md5(userId);
   var prImporterPostMessage = {
@@ -130,18 +131,18 @@ var postToPRImporter = function(protoHostAndPortUrlBase, userId, tableName, post
  * @return {[type]}         [description]
  */
 var html5DateAndTimeToJSDateTime = function(dateStr, timeStr) {
-	var darr = dateStr.split('-');
-	var tarr = timeStr.split(':');
+  var darr = dateStr.split('-');
+  var tarr = timeStr.split(':');
 
-	var year = parseInt(darr[0]),
-		month = parseInt(darr[1]) - 1,
-		day = parseInt(darr[2]),
-		hour = parseInt(parseInt(tarr[0], 10)),
-		minute = parseInt(parseInt(tarr[1], 10)),
-		second = 0
-		;
-	var d = new Date(year, month, day, hour, minute, second);
-	return d;
+  var year = parseInt(darr[0]),
+    month = parseInt(darr[1]) - 1,
+    day = parseInt(darr[2]),
+    hour = parseInt(parseInt(tarr[0], 10)),
+    minute = parseInt(parseInt(tarr[1], 10)),
+    second = 0
+    ;
+  var d = new Date(year, month, day, hour, minute, second);
+  return d;
 };
 
 

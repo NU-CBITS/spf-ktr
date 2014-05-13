@@ -12,19 +12,6 @@ app.config.mainContent.showTitle = false;
 app.config.assessments = {};
 app.config.assessments.exist = false;
 
-if (app.config.language == "spanish") {
-	app.config.voice_over = app.config.voice_over || "francisco";
-	app.media_folder = "spanish/";
-} else {
-	app.config.voice_over = app.config.voice_over || "sheano";
-	app.media_folder = "english/"
-};
-
-
-app.images_url = app.media_folder+"images/";
-app.videos_url = app.media_folder+"videos/";
-app.audio_url = app.media_folder+"audio/";
-
 app.status = {};
 app.status.currentState = null; //lesson, post_lesson, assessment1, assessment2, summary1, summary2 
 app.status.currentPageIndex = null;
@@ -85,7 +72,7 @@ app.getChapterContents = function (chapter_id, appContents) {
 };
 
 app.build = {}
-app.build.stringOfClicks = "a.animation, a.audio, a.audioImage, a.definition, a.graph, a.image, a.slide-show, a.table, a.table-modal, a.video, label.radio input, .mainContainer a, .mainContainer .btn, .bottom a, .bottom .btn";
+app.build.stringOfClicks = "a, a.animation, a.audio, a.audioImage, a.definition, a.graph, a.image, a.slide-show, a.table, a.table-modal, a.video, label.radio input, .mainContainer a, .mainContainer .btn, .bottom a, .bottom .btn";
 app.build.form = {};
 app.build.modal = ''+
 	'<div id="confirmSkipping" class="modal">'+
@@ -211,7 +198,7 @@ app.build.chapter = function (currentChapterId, appContents) {
 	console.log("Building Chapter", currentChapterId);
 
 	if (currentChapterId == 0) {
-		currentChapterId = 978;
+		currentChapterId = 977; // loads the first desired page...i.e., table of contents
 		$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
 	} else {
 		$("li.load-chapter[data-id=\"" + currentChapterId + "\"]").addClass("active");
@@ -262,6 +249,41 @@ app.actions.setScript = function(app) {
 	} else {
 		script.src = 'http://mohrlab.northwestern.edu/spf-ktr-e/build/js/app/content.js';
 	};
+
+  var template = ''+
+    '<div class="navbar navbar-static-top">'+
+      '<div class="navbar-inner">'+
+        '<div class="container-fluid">'+
+          '<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">'+
+            '<span class="icon-bar"></span>'+
+            '<span class="icon-bar"></span>'+
+            '<span class="icon-bar"></span>'+
+          '</a>'+
+          '<div class="nav-collapse collapse">'+
+            '<ul class="nav" id="main_nav"></ul>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div id="main" class="container-fluid">'+
+      '<div class="row-fluid mainContainer"></div>'+
+      '<div class="row-fluid bottom">'+
+        '<div class="span2">'+
+          '<button class="pageBack btn btn-large"></button>'+
+        '</div>'+
+        '<div class="span8">'+
+          '<div class="currentSlideCount text-center"></div>'+
+          '<div class="progress progress-striped chapterProgress">'+
+              '<div class="bar chapterProgressBar" style="width: 20%;"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="span2">'+
+          '<button class="pageNext btn btn-large" autofocus></button>'+
+        '</div>'+
+      '</div>'+
+    '</div>'
+  $('body').css('background-color','transparent').html(template);
+
 	$.getScript(script.src, function(){ app.start(appContent); });
 }
 
@@ -357,7 +379,6 @@ app.actions.setPage = function (pageContents) {
 		$(".bottomRight").html(pageContents.side_panel_content);
 	}
 
-	// $(".tooltip").tooltip();
 	$("a.image").on("click", function (ev) {
 		ev.preventDefault();
 		console.log(ev);
@@ -423,6 +444,7 @@ app.actions.setPage = function (pageContents) {
 			});
 		};
 	});
+
 	app.actions.recordUserActions(app.build.stringOfClicks);
 };
 
@@ -441,28 +463,33 @@ app.actions.recordUserSubmission = function(forms) {
 };
 
 app.actions.recordUserActions = function(tagsList) {
+
 	$(tagsList).on('click', function(event) {
-		var userClick;
+		var userClick, supportingContent, $target;
+
+		$target = $(event.currentTarget);
+		supportingContent = $target.parent().text() || ""
 
 		userClick = {
-			user_id: app.config.username,
-			invervention_id: app.inverventionId,
-			intervention_language: app.config.language,
-			intervention_voice_over: app.config.voice_over,
-			readable_click_datetime: (""+new Date()),
-			click_datetime: new Date(),
-			chapter: app.status.currentChapter(),
-			section: app.status.currentState,
-			page: app.status.currentPageIndex + 1,
-			href: $(this).attr("href"),
-			contents: $(this).html(),
-			tagClass: $(this).attr("class"),
-			tagId: $(this).attr("id"),
-			tagName: $(this).get(0).tagName
+			"user_id": app.config.username,
+			"invervention_id": JSON.stringify(app.inverventionId),
+			"intervention_language": JSON.stringify(app.config.language),
+			"intervention_voice_over": JSON.stringify(app.config.voice_over),
+			"readable_click_datetime": JSON.stringify((""+new Date())),
+			"click_datetime": JSON.stringify(new Date()),
+			"chapter": JSON.stringify(app.status.currentChapter()),
+			"section": JSON.stringify(app.status.currentState),
+			"page": JSON.stringify(app.status.currentPageIndex + 1),
+			"href": JSON.stringify($(this).attr("href")),
+			"contents": JSON.stringify($(this).html()),
+			"supportingContent": JSON.stringify($.trim(supportingContent)),
+			"tagClass": JSON.stringify($(this).attr("class")),
+			"tagId": JSON.stringify($(this).attr("id")),
+			"tagName": JSON.stringify($(this).get(0).tagName)
 		};
 
 		console.log("userClick", userClick)
-
+		//var postToPRImporter = function(protoHostAndPortUrlBase, userId, tableName, postData, cbFn, cbData) {
 		postToPRImporter(prwAddrHostAndPortHttps, app.inverventionId, "userClicks", userClick);
 
 	});
@@ -540,11 +567,11 @@ app.actions.loadImage = function (image, styles) {
 };
 
 app.actions.loadVideo = function (video) {
-
-	var videoTemplate = function (mp4_location) {
-		return '<video style=\"width:100%;\" controls autoplay><source src="' + app.videos_url + mp4_location + '" type="video/mp4">Your browser does not support the video tag.</video>'
+	var source = "http://mohrlab.northwestern.edu/spf-ktr/build/"+app.videos_url;
+	var videoTemplate = function (source, mp4_location) {
+		return '<video style=\"width:100%;\" controls autoplay><source src="' + source + mp4_location + '" type="video/mp4">Your browser does not support the video tag.</video>'
 	}
-	$(".topRight").html(videoTemplate(video.replace("http://", "").replace("/", "")));
+	$(".topRight").html(videoTemplate(source, video.replace("http://", "").replace("/", "")));
 	$('.topRight audio')[0].play(); // bc in android html5 autoplay doesn't work
 };
 
@@ -903,7 +930,7 @@ app.build.loadSkinColorHighChart = function () {
 				series: [{
 					name: function() {
 						if (app.config.language == "spanish") {
-							return "Antes de Transplante";
+							return "Antes de trasplante";
 						} else {
 							return 'Before Transplant';
 						};
@@ -912,7 +939,7 @@ app.build.loadSkinColorHighChart = function () {
 				}, {
 					name: function() {
 						if (app.config.language == "spanish") {
-							return "Después de Transplante";
+							return "Después de trasplante";
 						} else {
 							return 'After Transplant';
 						};

@@ -277,8 +277,7 @@
 
             routes: {
               "": "signIn",
-              "narrator/:id": "narrator",
-              "training_page": "training_page"
+              "narrator/:id": "narrator"
             },
 
             signIn: function() {
@@ -322,43 +321,6 @@
                 });
                 SPFKTRRouter.navigate("#narrator/"+app.config.language, {trigger: true})
               });
-            },
-
-            training_page: function() {
-              var template = ''+
-                '<div class="navbar navbar-static-top">'+
-                  '<div class="navbar-inner">'+
-                    '<div class="container-fluid">'+
-                      '<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">'+
-                        '<span class="icon-bar"></span>'+
-                        '<span class="icon-bar"></span>'+
-                        '<span class="icon-bar"></span>'+
-                      '</a>'+
-                      '<div class="nav-collapse collapse">'+
-                        '<ul class="nav" id="main_nav"></ul>'+
-                      '</div>'+
-                    '</div>'+
-                  '</div>'+
-                '</div>'+
-                '<div id="main" class="container-fluid">'+
-                  '<div class="row-fluid mainContainer"></div>'+
-                  '<div class="row-fluid bottom">'+
-                    '<div class="span2">'+
-                      '<button class="pageBack btn btn-large"></button>'+
-                    '</div>'+
-                    '<div class="span8">'+
-                      '<div class="currentSlideCount text-center"></div>'+
-                      '<div class="progress progress-striped chapterProgress">'+
-                          '<div class="bar chapterProgressBar" style="width: 20%;"></div>'+
-                      '</div>'+
-                    '</div>'+
-                    '<div class="span2">'+
-                      '<button class="pageNext btn btn-large" autofocus></button>'+
-                    '</div>'+
-                  '</div>'+
-                '</div>'
-              $('body').css('background-color','transparent').html(template);
-              app.actions.setScript(app);
             },
 
             narrator: function(language) {
@@ -419,14 +381,14 @@
                       '</div>'+
                       '<div class="span8"></div>'+
                       '<div class="span2">'+
-                        '<a href="#training_page" id="continue" class="btn btn-large btn-info">'+function(){
+                        '<button onClick="app.actions.setScript(app);" id="continue" class="btn btn-large">'+function(){
                             if (app.config.language == "english") {
                               return "Continue" 
                             } else {
                               return "Continuar" 
                             };
                           }()+' <i class="icon-chevron-right icon-white"></i>'+
-                        '</a>'+
+                        '</button>'+
                       '</div>'+
                   '</div>'+
                 '</div>';
@@ -434,6 +396,20 @@
               $(".caption button").on('click', function(event){
                 var target = $(event.target)
                 app.config.voice_over = target.val()
+
+                // set defaults
+                if (app.config.language == "spanish") {
+                  app.config.voice_over = app.config.voice_over || "francisco";
+                  app.media_folder = "spanish/";
+                } else {
+                  app.config.voice_over = app.config.voice_over || "sheano";
+                  app.media_folder = "english/"
+                };
+
+                app.images_url = app.media_folder+"images/";
+                app.videos_url = app.media_folder+"videos/";
+                app.audio_url = app.media_folder+"audio/";
+
               })
             }
           });
