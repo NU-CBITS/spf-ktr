@@ -1,4 +1,6 @@
 // var prJsonSubmitUrl = "http://10.101.117.92:12345/json/submit";  // http://10.101.117.92:12345/test.html
+
+// I updated this on 5/12/14 in order to allow tablet to submit data - Mike Wehrley (5/13/14)
 var prwAddrHostAndPortHttps = "http://app2.cbits.northwestern.edu"; // https://ejs.cbits.northwestern.edu:8094 OR https://165.124.171.88 OR https://165.124.171.34:8094
 var triggerIdCommonPrefix = 'CopingCard: ';
 
