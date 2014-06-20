@@ -415,20 +415,18 @@ app.actions.setPage = function (pageContents) {
 	$(".btn-group button#email-score").on("click", function(event) {
 		var target = event.target,
 			$btnGroup = $(target).parent('.btn-group'),
-			$emailContainer = $("form#email-container");
+			$emailContainer = $("div#email-container");
 
 		if ($emailContainer.length === 0) {
 			var email = app.config.email || "";
 
 			$btnGroup.after(''+
-				'<form id="email-container">'+
-					'<fieldset>'+
-						'<label for="email">Email</label>'+
-						'<input name="email" type="email" value="'+email+'" class="span12 input-lg">'+
-					'</fieldset>'+
-				'</form>');
+				'<div id="email-container">'+
+					'<label for="email">Email</label>'+
+					'<input name="email" type="email" value="'+email+'" class="span12 input-lg">'+
+				'</div>');
 
-			var $emailInput = $("form#email-container input");
+			var $emailInput = $("div#email-container input");
 
 			$emailInput.on('change', function(){
 				var email = $emailInput.val();
@@ -437,7 +435,7 @@ app.actions.setPage = function (pageContents) {
 				app.config.handout = false;
 			});
 			$(".btn-group button#email-handout").on("click", function(event) {
-				var $emailContainer = $("form#email-container");
+				var $emailContainer = $("div#email-container");
 
 				if (!($emailContainer.length === 0)) { $emailContainer.remove(); };
 				app.config.handout = true;
